@@ -281,25 +281,39 @@ h1 {
 
 /* ═══════════ TRUST BAR ═══════════ */
 .trust-bar {
-  position: relative; z-index: 1;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.015);
-  padding: 16px 24px;
+  position: relative; z-index: 10;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 20px 24px;
 }
 .trust-inner {
   max-width: 1200px; margin: 0 auto;
   display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
 }
-.trust-label { font-size: 12px; font-weight: 600; color: var(--text-3); white-space: nowrap; }
+.trust-label { font-size: 11px; font-weight: 700; color: var(--text-2); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em; }
 .trust-logos { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .tlogo {
-  font-size: 12px; font-weight: 600; color: var(--text-3);
-  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-  padding: 5px 12px; border-radius: 100px;
-  transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--text-2);
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  padding: 6px 14px; border-radius: 100px;
+  transition: all 0.22s var(--ease);
 }
-.tlogo:hover { color: var(--text-2); background: rgba(255,255,255,0.07); }
+.tlogo-img {
+  width: 18px; height: 18px; object-fit: contain; flex-shrink: 0;
+  filter: brightness(0) invert(0.65);
+  transition: filter 0.2s;
+}
+.tlogo:hover { 
+  color: var(--text-1); 
+  background: rgba(255,255,255,0.07); 
+  border-color: rgba(255,255,255,0.15);
+  transform: translateY(-1px);
+}
+.tlogo:hover .tlogo-img { filter: brightness(0) invert(0.9); }
 
 /* ═══════════ SECTIONS ═══════════ */
 .section {
@@ -353,7 +367,15 @@ h1 {
   font-size: 11px; font-weight: 800; color: var(--text-3); margin-bottom: 14px;
   letter-spacing: 0.1em;
 }
-.crisis-icon { font-size: 32px; margin-bottom: 14px; }
+.crisis-icon { 
+  display: flex; align-items: center; justify-content: flex-start;
+  height: 40px; margin-bottom: 14px; color: var(--accent-2); 
+}
+.crisis-icon svg { width: 32px; height: 32px; }
+.crisis-logo {
+  width: 36px; height: 36px; object-fit: contain;
+  filter: brightness(0) invert(0.75);
+}
 .crisis-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 12px; }
 .crisis-card p  { font-size: 14px; color: var(--text-2); line-height: 1.65; margin-bottom: 20px; }
 .crisis-card strong { color: var(--text-1); }
