@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
@@ -133,7 +133,42 @@
 
     @media (max-width: 900px) {
       .pricing-grid { grid-template-columns: 1fr; }
+      .price-card[style*="span 2"] { grid-column: span 1 !important; }
+      .price-features[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
       .custom-project-card { flex-direction: column; text-align: center; }
+      .custom-project-card .btn-primary { width: 100%; justify-content: center; }
+    }
+
+    @media (max-width: 600px) {
+      .pricing-hero { padding: 60px 16px 36px; }
+      .pricing-hero h1 { font-size: 26px; letter-spacing: -1px; }
+      .pricing-hero p  { font-size: 14px; }
+      .pricing-note { font-size: 11px; padding: 6px 14px; }
+
+      .pricing-grid { padding: 0 16px 60px; gap: 16px; }
+      .price-card { padding: 28px 20px; border-radius: 16px; }
+      .price-card h3 { font-size: 18px; }
+      .price-number { font-size: 42px; }
+      .price-tagline { font-size: 12px; }
+      .price-features li { font-size: 13px; }
+      .price-cta-btn { padding: 12px; font-size: 13px; }
+
+      .custom-project-row { margin-bottom: 48px; padding: 0 16px; }
+      .custom-project-card { padding: 24px 20px; border-radius: 16px; gap: 20px; }
+      .custom-project-card h3 { font-size: 18px; }
+      .custom-project-card p  { font-size: 13px; }
+
+      .faq-section { padding: 0 16px; margin-bottom: 60px; }
+      .faq-section h2 { font-size: 22px; margin-bottom: 24px; }
+      .faq-item { padding: 18px 16px; }
+      .faq-q { font-size: 14px; }
+      .faq-a { font-size: 13px; }
+    }
+
+    @media (max-width: 380px) {
+      .pricing-hero h1 { font-size: 22px; }
+      .price-number { font-size: 36px; }
+      .price-card { padding: 22px 16px; }
     }
   </style>
 </head>
