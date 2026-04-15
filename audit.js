@@ -305,39 +305,51 @@ async function emailReport() {
     statusEl.innerHTML = `<span style="color:#94a3b8">${t('email_uploading')}</span>`;
     const R = window._auditResults;
 
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name:         document.getElementById('clientName').value.trim(),
-        email:        trimmedEmail,
-        businessName: document.getElementById('businessName').value.trim(),
-        websiteUrl:   document.getElementById('websiteUrl').value.trim(),
-        score:        R.score,
-        gradeKey:     R.gradeKey,
-        signalLoss:   R.signalLoss,
-        issues:       R.issues,
-        pdfBase64,
-      }),
-    });
-
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'Send failed');
+    let responseOk = false;
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:         document.getElementById('clientName').value.trim(),
+          email:        trimmedEmail,
+          businessName: document.getElementById('businessName').value.trim(),
+          websiteUrl:   document.getElementById('websiteUrl').value.trim(),
+          score:        R.score,
+          gradeKey:     R.gradeKey,
+          signalLoss:   R.signalLoss,
+          issues:       R.issues,
+          pdfBase64,
+        }),
+      });
+      /* Treat any 2xx as success — function may time out AFTER successfully sending */
+      if (response.status >= 200 && response.status < 300) responseOk = true;
+      else {
+        let result = {};
+        try { result = await response.json(); } catch (_) {}
+        throw new Error(result.error || `HTTP ${response.status}`);
+      }
+    } catch (fetchErr) {
+      /* If it was a network timeout but status was already 2xx, treat as success */
+      if (!responseOk) throw fetchErr;
+    }
 
     /* Step 3 — success */
     state.emailSent = true;
-    btn.innerHTML = `✅ <span>${t('email_sent_btn')}</span>`;
+    btn.disabled = true;
+    btn.innerHTML = `✓ <span>${t('email_sent_btn')}</span>`;
     btn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)';
-    statusEl.innerHTML = `<span style="color:#86efac;font-size:13px">✉️ ${t('email_sent_msg')} <strong>${trimmedEmail}</strong></span>`;
+    statusEl.innerHTML = `<span style="color:#86efac;font-size:13px">✉️ ${t('email_sent_msg')} <strong>${trimmedEmail}</strong> — ${t('email_check_spam') || 'Check your spam/junk folder if not visible in inbox.'}</span>`;
 
-    /* Show fallback download link */
+    /* Always show fallback download link after send */
     document.getElementById('directDownloadWrap').style.display = 'block';
 
   } catch (err) {
     console.error('Email send failed:', err);
+    /* If email may have gone through anyway (e.g. timeout), show ambiguous message */
     btn.disabled = false;
-    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4l16 16M4 20L20 4"/></svg> <span>${t('email_failed_btn')}</span>`;
-    statusEl.innerHTML = `<span style="color:#fca5a5;font-size:13px">${t('email_failed_msg')} <a href="#" onclick="directDownload();return false;" style="color:#818cf8;text-decoration:underline">${t('email_failed_download')}</a></span>`;
+    btn.innerHTML = `✗ <span>${t('email_failed_btn')}</span>`;
+    statusEl.innerHTML = `<span style="color:#fca5a5;font-size:13px">${t('email_failed_msg')} — <a href="#" onclick="directDownload();return false;" style="color:#818cf8;text-decoration:underline">${t('email_failed_download')}</a></span>`;
   }
 }
 
@@ -364,127 +376,175 @@ function directDownload() {
   doc.save(`Signal-Audit-${bizName.replace(/\s+/g,'-')}-${today.replace(/\s/g,'-')}.pdf`);
 }
 
+// ── EMOJI STRIPPER (jsPDF Helvetica cannot render emoji — outputs gibberish) ──
+function stripEmoji(str) {
+  if (!str) return '';
+  // Remove emoji & non-latin symbols that jsPDF can't render
+  return String(str)
+    .replace(/[\u{1F000}-\u{1FFFF}]/gu, '')
+    .replace(/[\u{2600}-\u{27BF}]/gu, '')
+    .replace(/[\u{2B00}-\u{2BFF}]/gu, '')
+    .replace(/[\u{1F300}-\u{1F9FF}]/gu, '')
+    .replace(/[\u2702-\u27B0]/gu,      '')
+    .replace(/[\u24C2-\u{1F251}]/gu,   '')
+    .replace(/\uFE0F/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/[\u{1F1E0}-\u{1F1FF}]/gu,'')
+    .trim();
+}
+
 // ── PDF GENERATION (shared builder) ──
 function buildPDFDoc() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   const R   = window._auditResults;
-  const clientName   = document.getElementById('clientName').value.trim()   || 'Client';
-  const businessName = document.getElementById('businessName').value.trim() || 'Business';
-  const websiteUrl   = document.getElementById('websiteUrl').value.trim()   || '—';
+  const clientName   = stripEmoji(document.getElementById('clientName').value.trim()   || 'Client');
+  const businessName = stripEmoji(document.getElementById('businessName').value.trim() || 'Business');
+  const websiteUrl   = document.getElementById('websiteUrl').value.trim() || 'N/A';
   const today        = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   const W = 210;
+  const PAGE_BG   = [15, 20, 35];   // dark navy — used as page background
+  const CARD_BG   = [22, 30, 50];   // slightly lighter card
+  const TEXT_HEAD = [255, 255, 255]; // white headings
+  const TEXT_BODY = [200, 210, 228]; // light-blue-gray body text (high contrast on dark)
+  const TEXT_MUTE = [160, 175, 200]; // muted label text
   let y = 0;
 
-  // Header
-  doc.setFillColor(8, 11, 20);
-  doc.rect(0, 0, W, 52, 'F');
+  // ── PAGE BACKGROUND ──
+  doc.setFillColor(...PAGE_BG);
+  doc.rect(0, 0, W, 297, 'F');
+
+  // ── HEADER BAND ──
+  doc.setFillColor(40, 40, 120);
+  doc.rect(0, 0, W, 54, 'F');
+  // Purple pill label
   doc.setFillColor(99, 102, 241);
-  doc.roundedRect(16, 14, 50, 8, 2, 2, 'F');
-  doc.setTextColor(255, 255, 255);
+  doc.roundedRect(14, 12, 52, 8, 2, 2, 'F');
+  doc.setTextColor(...TEXT_HEAD);
   doc.setFontSize(7); doc.setFont('helvetica', 'bold');
-  doc.text(t('pdf_tagline'), 20, 20);
-  doc.setFontSize(18); doc.setFont('helvetica', 'bold');
-  doc.text(businessName, 16, 35);
-  doc.setFontSize(9); doc.setFont('helvetica', 'normal');
-  doc.setTextColor(148, 163, 184);
-  doc.text(`${t('pdf_prepared')}: ${clientName}  |  ${websiteUrl}  |  ${today}`, 16, 44);
+  doc.text(stripEmoji(t('pdf_tagline')), 18, 18);
+  // Business name
+  doc.setFontSize(17); doc.setFont('helvetica', 'bold');
+  doc.text(businessName, 14, 34);
+  // Meta line
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...TEXT_MUTE);
+  const metaLine = `${stripEmoji(t('pdf_prepared'))}: ${clientName}  |  ${websiteUrl}  |  ${today}`;
+  doc.text(metaLine, 14, 44);
+  // Self-assessment disclaimer
+  doc.setFontSize(6.5); doc.setTextColor(180, 190, 220);
+  doc.text('Self-Assessment Report — Based on answers provided by the advertiser', 14, 51);
   y = 62;
 
-  // Score box
-  const scoreColor = R.score >= 8 ? [34,197,94] : R.score >= 6 ? [245,158,11] : R.score >= 4 ? [249,115,22] : [239,68,68];
-  doc.setFillColor(20, 24, 40);
-  doc.roundedRect(16, y, W - 32, 38, 4, 4, 'F');
-  doc.setDrawColor(...scoreColor); doc.setLineWidth(0.5);
-  doc.roundedRect(16, y, W - 32, 38, 4, 4, 'S');
-  doc.setFontSize(36); doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...scoreColor);
-  doc.text(`${R.score.toFixed(1)}`, 30, y + 24);
+  // ── SCORE BOX ──
+  const scoreRGB = R.score >= 8 ? [34,197,94] : R.score >= 6 ? [245,158,11] : R.score >= 4 ? [249,115,22] : [239,68,68];
+  doc.setFillColor(...CARD_BG);
+  doc.roundedRect(14, y, W - 28, 40, 4, 4, 'F');
+  doc.setDrawColor(...scoreRGB); doc.setLineWidth(0.6);
+  doc.roundedRect(14, y, W - 28, 40, 4, 4, 'S');
+  // Big score number
+  doc.setFontSize(34); doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...scoreRGB);
+  doc.text(`${R.score.toFixed(1)}`, 28, y + 26);
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.setTextColor(100, 116, 139);
-  doc.text('/10', 30, y + 32);
-  doc.setFontSize(13); doc.setFont('helvetica', 'bold');
-  doc.setTextColor(241, 245, 249);
-  const gradeText = t(R.gradeKey).replace(/[🟢🟡🟠🔴]/gu, '').trim();
+  doc.setTextColor(...TEXT_MUTE);
+  doc.text('/10', 28, y + 34);
+  // Grade label
+  const gradeText = stripEmoji(t(R.gradeKey));
+  doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...scoreRGB);
   doc.text(gradeText, 76, y + 16);
+  // Description
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');
-  doc.setTextColor(148, 163, 184);
-  const descLines = doc.splitTextToSize(t(R.descKey), 110);
-  doc.text(descLines, 76, y + 23);
-  y += 46;
+  doc.setTextColor(...TEXT_BODY);
+  const descLines = doc.splitTextToSize(stripEmoji(t(R.descKey)), 118);
+  doc.text(descLines, 76, y + 24);
+  y += 48;
 
-  // Signal loss
-  doc.setFillColor(60, 20, 20);
-  doc.roundedRect(16, y, W - 32, 14, 3, 3, 'F');
-  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(252, 165, 165);
-  doc.text(t('pdf_signal_loss'), 24, y + 6);
-  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(239, 68, 68);
-  doc.text(`~${R.signalLoss}%`, 24, y + 12);
-  y += 22;
+  // ── SIGNAL LOSS BANNER ──
+  doc.setFillColor(80, 20, 20);
+  doc.roundedRect(14, y, W - 28, 16, 3, 3, 'F');
+  doc.setDrawColor(239, 68, 68); doc.setLineWidth(0.3);
+  doc.roundedRect(14, y, W - 28, 16, 3, 3, 'S');
+  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(255, 200, 200);
+  doc.text(stripEmoji(t('pdf_signal_loss')), 22, y + 7);
+  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(255, 100, 100);
+  doc.text(`~${R.signalLoss}%`, 22, y + 14);
+  y += 24;
 
-  // Issues
-  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(241, 245, 249);
-  doc.text(`${t('pdf_issues_found')} (${R.issues.length})`, 16, y); y += 7;
+  // ── ISSUES ──
+  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(...TEXT_HEAD);
+  doc.text(`${stripEmoji(t('pdf_issues_found'))} (${R.issues.length})`, 14, y); y += 8;
 
-  const sevColors = {
-    high: { bg: [60,15,15], border: [239,68,68], badge: [252,165,165] },
-    mid:  { bg: [50,35,10], border: [245,158,11], badge: [252,211,77] },
-    low:  { bg: [20,20,50], border: [99,102,241], badge: [165,180,252] }
+  const sevCfg = {
+    high: { bg: [65, 18, 18],  border: [239, 68,  68],  badgeText: [255, 180, 180] },
+    mid:  { bg: [55, 38, 10],  border: [245, 158, 11],  badgeText: [255, 220, 120] },
+    low:  { bg: [20, 22, 60],  border: [99,  102, 241], badgeText: [180, 190, 255] },
   };
 
   R.issues.forEach(issue => {
-    const c = sevColors[issue.severity];
-    const desc = doc.splitTextToSize(issue.body, W - 52);
-    const boxH = 8 + desc.length * 4.5 + 8;
-    if (y + boxH > 280) { doc.addPage(); y = 20; }
+    const c   = sevCfg[issue.severity] || sevCfg.low;
+    const titleClean = stripEmoji(issue.title);
+    const bodyClean  = stripEmoji(issue.body);
+    const badgeClean = stripEmoji(issue.badge).toUpperCase();
+    const bodyLines  = doc.splitTextToSize(bodyClean, W - 48);
+    const boxH       = 9 + bodyLines.length * 4.8 + 10;
+    if (y + boxH > 278) { doc.addPage(); doc.setFillColor(...PAGE_BG); doc.rect(0,0,W,297,'F'); y = 18; }
     doc.setFillColor(...c.bg);
-    doc.roundedRect(16, y, W - 32, boxH, 3, 3, 'F');
-    doc.setDrawColor(...c.border); doc.setLineWidth(0.3);
-    doc.roundedRect(16, y, W - 32, boxH, 3, 3, 'S');
-    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(241, 245, 249);
-    doc.text(`${issue.icon} ${issue.title}`, 22, y + 7);
-    doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
-    doc.text(desc, 22, y + 13);
-    doc.setFillColor(...c.badge);
-    doc.setFontSize(6); doc.setFont('helvetica', 'bold'); doc.setTextColor(20, 20, 40);
-    doc.text(issue.badge.toUpperCase(), 22, y + boxH - 3);
-    y += boxH + 4;
+    doc.roundedRect(14, y, W - 28, boxH, 3, 3, 'F');
+    doc.setDrawColor(...c.border); doc.setLineWidth(0.35);
+    doc.roundedRect(14, y, W - 28, boxH, 3, 3, 'S');
+    // Title
+    doc.setFontSize(9.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...TEXT_HEAD);
+    doc.text(titleClean, 20, y + 8);
+    // Body
+    doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...TEXT_BODY);
+    doc.text(bodyLines, 20, y + 14);
+    // Badge
+    doc.setFontSize(6.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...c.badgeText);
+    doc.text(badgeClean, 20, y + boxH - 3);
+    y += boxH + 5;
   });
 
   y += 4;
 
-  // Opportunities
+  // ── OPPORTUNITIES ──
   if (R.opportunities.length > 0) {
-    if (y + 16 > 275) { doc.addPage(); y = 20; }
-    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(241, 245, 249);
-    doc.text(`${t('pdf_actions')} (${R.opportunities.length})`, 16, y); y += 7;
+    if (y + 18 > 272) { doc.addPage(); doc.setFillColor(...PAGE_BG); doc.rect(0,0,W,297,'F'); y = 18; }
+    doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(...TEXT_HEAD);
+    doc.text(`${stripEmoji(t('pdf_actions'))} (${R.opportunities.length})`, 14, y); y += 8;
     R.opportunities.forEach(opp => {
-      const desc = doc.splitTextToSize(opp.body, W - 52);
-      const boxH = 8 + desc.length * 4.5 + 4;
-      if (y + boxH > 280) { doc.addPage(); y = 20; }
-      doc.setFillColor(10, 25, 15);
-      doc.roundedRect(16, y, W - 32, boxH, 3, 3, 'F');
-      doc.setDrawColor(34, 197, 94); doc.setLineWidth(0.3);
-      doc.roundedRect(16, y, W - 32, boxH, 3, 3, 'S');
-      doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(134, 239, 172);
-      doc.text(`${opp.icon} ${opp.title}`, 22, y + 7);
-      doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
-      doc.text(desc, 22, y + 13);
-      y += boxH + 4;
+      const titleClean = stripEmoji(opp.title);
+      const bodyClean  = stripEmoji(opp.body);
+      const bodyLines  = doc.splitTextToSize(bodyClean, W - 48);
+      const boxH       = 9 + bodyLines.length * 4.8 + 4;
+      if (y + boxH > 278) { doc.addPage(); doc.setFillColor(...PAGE_BG); doc.rect(0,0,W,297,'F'); y = 18; }
+      doc.setFillColor(12, 32, 20);
+      doc.roundedRect(14, y, W - 28, boxH, 3, 3, 'F');
+      doc.setDrawColor(34, 180, 94); doc.setLineWidth(0.35);
+      doc.roundedRect(14, y, W - 28, boxH, 3, 3, 'S');
+      doc.setFontSize(9.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(120, 240, 160);
+      doc.text(titleClean, 20, y + 8);
+      doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...TEXT_BODY);
+      doc.text(bodyLines, 20, y + 14);
+      y += boxH + 5;
     });
   }
 
-  // Footer CTA
-  if (y + 28 > 280) { doc.addPage(); y = 20; }
-  y += 6;
-  doc.setFillColor(30, 30, 60);
-  doc.roundedRect(16, y, W - 32, 26, 4, 4, 'F');
-  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(165, 180, 252);
-  doc.text(t('pdf_cta_1'), 24, y + 9);
-  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(148, 163, 184);
-  doc.text(doc.splitTextToSize(t('pdf_cta_2'), W - 40), 24, y + 16);
-  doc.setTextColor(99, 102, 241);
-  doc.text(t('pdf_cta_3'), 24, y + 23);
+  // ── FOOTER CTA ──
+  if (y + 32 > 278) { doc.addPage(); doc.setFillColor(...PAGE_BG); doc.rect(0,0,W,297,'F'); y = 18; }
+  y += 8;
+  doc.setFillColor(30, 30, 75);
+  doc.roundedRect(14, y, W - 28, 30, 4, 4, 'F');
+  doc.setDrawColor(99, 102, 241); doc.setLineWidth(0.3);
+  doc.roundedRect(14, y, W - 28, 30, 4, 4, 'S');
+  doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(200, 205, 255);
+  doc.text(stripEmoji(t('pdf_cta_1')), 22, y + 10);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(...TEXT_BODY);
+  const ctaLines = doc.splitTextToSize(stripEmoji(t('pdf_cta_2')), W - 44);
+  doc.text(ctaLines, 22, y + 17);
+  doc.setTextColor(140, 150, 255);
+  doc.text(stripEmoji(t('pdf_cta_3')), 22, y + 27);
 
   return doc;
 }
