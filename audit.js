@@ -4,7 +4,8 @@
 
 const state = { currentStep: 0, totalSteps: 5, answers: {}, emailSent: false };
 
-/* API endpoint — switches automatically between local dev and production */
+/* API endpoint — switches automatically between local dev and production.
+   If testing on localhost/file, replace the URL below with your actual Netlify site URL. */
 const API_URL = window.location.hostname === 'localhost' || window.location.protocol === 'file:'
   ? 'https://YOUR-NETLIFY-SITE.netlify.app/.netlify/functions/send-report'
   : '/.netlify/functions/send-report';
@@ -365,6 +366,8 @@ function directDownload() {
 
 // ── PDF GENERATION (shared builder) ──
 function buildPDFDoc() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
   const R   = window._auditResults;
   const clientName   = document.getElementById('clientName').value.trim()   || 'Client';
   const businessName = document.getElementById('businessName').value.trim() || 'Business';
@@ -484,7 +487,6 @@ function buildPDFDoc() {
   doc.text(t('pdf_cta_3'), 24, y + 23);
 
   return doc;
-}
 }
 
 // ── RESTART ──
