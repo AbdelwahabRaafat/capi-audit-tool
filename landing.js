@@ -93,3 +93,71 @@ window.addEventListener('scroll', () => {
     link.style.background = link.getAttribute('href') === `#${current}` ? 'rgba(99,102,241,0.08)' : '';
   });
 }, { passive: true });
+
+// ── Lead Modal ──
+const LEAD_API = window.location.protocol === 'file:'
+  ? 'https://idyllic-alpaca-f5e25b.netlify.app/.netlify/functions/send-lead'
+  : '/.netlify/functions/send-lead';
+
+let _currentService = '';
+
+function openLeadModal(service) {
+  _currentService = service || '';
+  document.getElementById('leadModalService').textContent = service || 'General Inquiry';
+  document.getElementById('leadForm').style.display    = 'block';
+  document.getElementById('leadSuccess').style.display = 'none';
+  document.getElementById('leadError').style.display   = 'none';
+  document.getElementById('leadSubmitBtn').disabled    = false;
+  document.getElementById('leadSubmitBtn').textContent = 'Send My Request →';
+  const modal = document.getElementById('leadModal');
+  modal.style.display = 'flex';
+  setTimeout(() => { modal.style.opacity = '1'; }, 10);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLeadModal() {
+  const modal = document.getElementById('leadModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLeadModal();
+});
+
+async function submitLeadForm() {
+  const name       = (document.getElementById('leadName').value || '').trim();
+  const email      = (document.getElementById('leadEmail').value || '').trim();
+  const websiteUrl = (document.getElementById('leadWebsite').value || '').trim();
+  const errEl      = document.getElementById('leadError');
+  const btn        = document.getElementById('leadSubmitBtn');
+
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'Please enter a valid business email.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  btn.disabled    = true;
+  btn.textContent = 'Sending…';
+
+  try {
+    await fetch(LEAD_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, websiteUrl, service: _currentService }),
+    });
+    // Show success regardless (avoid exposing backend errors to user)
+    document.getElementById('leadSuccessEmail').textContent = email;
+    document.getElementById('leadForm').style.display    = 'none';
+    document.getElementById('leadSuccess').style.display = 'block';
+  } catch (_) {
+    // Even on network error, show success — the user shouldn't see technical errors
+    document.getElementById('leadSuccessEmail').textContent = email;
+    document.getElementById('leadForm').style.display    = 'none';
+    document.getElementById('leadSuccess').style.display = 'block';
+  }
+}
+

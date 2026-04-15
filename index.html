@@ -408,30 +408,35 @@
           <h3 data-i18n="svc1_title">CAPI Implementation</h3>
           <p data-i18n="svc1_body">We build the server-side connection from scratch — event receiver, identity hasher, deduplication layer, and Meta API sender.</p>
           <div class="service-tags"><span>Shopify</span><span>WooCommerce</span><span>Custom</span></div>
+          <button class="svc-cta-btn" onclick="openLeadModal('CAPI Implementation')" data-i18n="svc_cta">Book a Strategic Call →</button>
         </div>
         <div class="service-card reveal">
           <div class="service-icon" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">✨</div>
           <h3 data-i18n="svc2_title">Data Enrichment</h3>
           <p data-i18n="svc2_body">We pipe your CRM data through CAPI to dramatically boost your EMQ score and audience match quality.</p>
           <div class="service-tags"><span>HubSpot</span><span>Salesforce</span><span>Zoho</span></div>
+          <button class="svc-cta-btn" onclick="openLeadModal('Data Enrichment')" data-i18n="svc_cta">Book a Strategic Call →</button>
         </div>
         <div class="service-card reveal">
           <div class="service-icon" style="background:linear-gradient(135deg,#f59e0b,#f97316)">🏪</div>
           <h3 data-i18n="svc3_title">Offline Conversion Sync</h3>
           <p data-i18n="svc3_body">Meta discontinued its Offline Conversions API in May 2025. We migrate your in-store and CRM-based conversions to flow through CAPI.</p>
           <div class="service-tags"><span>POS Systems</span><span>Phone Sales</span><span>In-Store</span></div>
+          <button class="svc-cta-btn" onclick="openLeadModal('Offline Conversion Sync')" data-i18n="svc_cta">Book a Strategic Call →</button>
         </div>
         <div class="service-card reveal">
           <div class="service-icon" style="background:linear-gradient(135deg,#ef4444,#f97316)">🔍</div>
           <h3 data-i18n="svc4_title">Deduplication Auditing</h3>
           <p data-i18n="svc4_body">4 out of 12 CAPI setups we've audited had broken deduplication — creating inflated conversion counts that mask real CPA degradation.</p>
           <div class="service-tags"><span>Event ID Setup</span><span>CPA Correction</span></div>
+          <button class="svc-cta-btn" onclick="openLeadModal('Deduplication Auditing')" data-i18n="svc_cta">Book a Strategic Call →</button>
         </div>
         <div class="service-card reveal" style="grid-column: span 2;">
           <div class="service-icon" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)">📊</div>
           <h3 data-i18n="svc5_title">Ongoing Signal Monitoring</h3>
           <p data-i18n="svc5_body">A live dashboard tracking your EMQ score, event match rates, and attribution health — with automatic alerts when signal quality degrades.</p>
           <div class="service-tags"><span>EMQ Tracking</span><span>Match Rate</span><span>Weekly Reports</span><span>Slack Alerts</span></div>
+          <button class="svc-cta-btn" onclick="openLeadModal('Ongoing Signal Monitoring')" data-i18n="svc_cta">Book a Strategic Call →</button>
         </div>
       </div>
     </div>
@@ -502,10 +507,53 @@
         <a href="#how-it-works" data-i18n="nav_howItWorks">How It Works</a>
         <a href="#services"     data-i18n="nav_services">Services</a>
         <a href="audit.html"    data-i18n="nav_freeAudit">Free Audit →</a>
+        <a href="pricing.html"  data-i18n="nav_pricing">Pricing</a>
       </div>
       <div class="footer-copy" data-i18n="footer_copy">© 2025 SignalAudit. Independent CAPI services. Not affiliated with Meta.</div>
     </div>
   </footer>
+
+  <!-- ══ LEAD CAPTURE MODAL ══ -->
+  <div id="leadModal" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;padding:20px;">
+    <!-- Backdrop -->
+    <div id="leadBackdrop" onclick="closeLeadModal()" style="position:absolute;inset:0;background:rgba(8,11,20,0.85);backdrop-filter:blur(8px);"></div>
+    <!-- Panel -->
+    <div style="position:relative;width:100%;max-width:480px;background:linear-gradient(145deg,#0f1520,#161e30);border:1px solid rgba(99,102,241,0.25);border-radius:20px;padding:36px;box-shadow:0 40px 80px rgba(0,0,0,0.6);">
+      <!-- Close -->
+      <button onclick="closeLeadModal()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.06);border:none;border-radius:8px;color:#94a3b8;width:32px;height:32px;cursor:pointer;font-size:18px;line-height:32px;" aria-label="Close">&times;</button>
+      <!-- Service badge -->
+      <div id="leadModalService" style="display:inline-block;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);border-radius:100px;padding:4px 14px;color:#a5b4fc;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:18px;"></div>
+      <!-- Heading -->
+      <h2 style="margin:0 0 6px;color:#f1f5f9;font-size:22px;font-weight:800;letter-spacing:-0.5px;">Book a Strategic Call</h2>
+      <p style="margin:0 0 24px;color:#64748b;font-size:14px;">Leave your details and we'll reach out within 24 hours to schedule.</p>
+      <!-- Form (default state) -->
+      <div id="leadForm">
+        <div style="margin-bottom:14px;">
+          <label style="display:block;color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Your Name</label>
+          <input id="leadName" type="text" placeholder="Ahmed Al-Rashid" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block;color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Business Email</label>
+          <input id="leadEmail" type="email" placeholder="you@company.com" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+        </div>
+        <div style="margin-bottom:22px;">
+          <label style="display:block;color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Website URL</label>
+          <input id="leadWebsite" type="url" placeholder="https://yourstore.com" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+        </div>
+        <div id="leadError" style="display:none;color:#fca5a5;font-size:13px;margin-bottom:12px;"></div>
+        <button id="leadSubmitBtn" onclick="submitLeadForm()" style="width:100%;background:linear-gradient(135deg,#6366f1,#7c3aed);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;">
+          Send My Request →
+        </button>
+        <p style="margin:12px 0 0;color:#475569;font-size:11px;text-align:center;">No spam. We'll only contact you about your inquiry.</p>
+      </div>
+      <!-- Thank you state (hidden by default) -->
+      <div id="leadSuccess" style="display:none;text-align:center;padding:20px 0;">
+        <div style="font-size:48px;margin-bottom:16px;">✓</div>
+        <h3 style="margin:0 0 10px;color:#86efac;font-size:20px;font-weight:800;">Request Received!</h3>
+        <p style="margin:0;color:#94a3b8;font-size:14px;">We'll reach out to <strong id="leadSuccessEmail" style="color:#f1f5f9;"></strong> within 24 hours.</p>
+      </div>
+    </div>
+  </div>
 
   <script src="i18n.js"></script>
   <script src="landing.js"></script>

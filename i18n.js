@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
+﻿/* ═══════════════════════════════════════════════════════════
    i18n.js  —  Translations engine for SignalAudit
    Supports: English (en), Arabic (ar), French (fr)
    ═══════════════════════════════════════════════════════════ */
@@ -16,6 +16,7 @@ const TRANSLATIONS = {
     nav_learnMore: 'Learn More',
     nav_freeAudit: 'Free Audit',
     nav_backToSite: 'Back to site',
+    nav_pricing: 'Pricing',
 
     /* ── Landing: Hero ── */
     hero_eyebrow: 'Free Signal Diagnostic — No Account Required',
@@ -797,6 +798,7 @@ const TRANSLATIONS = {
     nav_learnMore: 'En Savoir Plus',
     nav_freeAudit: 'Audit Gratuit',
     nav_backToSite: 'Retour au site',
+    nav_pricing: 'Tarifs',
 
     hero_eyebrow: 'Diagnostic Gratuit — Aucun Compte Requis',
     hero_h1_line1: 'Vos Publicités Meta Tournent sur des',
@@ -1177,6 +1179,7 @@ const TRANSLATIONS = {
     nav_learnMore: 'Saber Más',
     nav_freeAudit: 'Auditoría Gratuita',
     nav_backToSite: 'Volver al sitio',
+    nav_pricing: 'Precios',
 
     /* ── Landing: Hero ── */
     hero_eyebrow: 'Diagnóstico de Señal Gratuito — Sin Cuenta Necesaria',
@@ -1981,6 +1984,7 @@ const TRANSLATIONS = {
     nav_learnMore: 'Saiba Mais',
     nav_freeAudit: 'Auditoria Gratuita',
     nav_backToSite: 'Voltar ao site',
+    nav_pricing: 'Precos',
 
     /* ── Landing: Hero ── */
     hero_eyebrow: 'Diagnóstico de Sinal Gratuito — Sem Conta Necessária',
@@ -2383,6 +2387,7 @@ const TRANSLATIONS = {
     nav_learnMore: 'Scopri di più',
     nav_freeAudit: 'Audit Gratuito',
     nav_backToSite: 'Torna al sito',
+    nav_pricing: 'Prezzi',
 
     /* ── Landing: Hero ── */
     hero_eyebrow: 'Diagnostica Segnale Gratuita — Nessun Account Richiesto',

@@ -500,6 +500,23 @@ h1 {
   font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px;
   background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-3);
 }
+.svc-cta-btn {
+  margin-top: 20px; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  padding: 11px 18px; border-radius: 10px;
+  background: transparent;
+  border: 1px solid rgba(99,102,241,0.35);
+  color: var(--accent-2); font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: 'Inter', sans-serif;
+  transition: all 0.22s var(--ease); letter-spacing: 0.02em;
+}
+.svc-cta-btn:hover {
+  background: rgba(99,102,241,0.12);
+  border-color: rgba(99,102,241,0.6);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(99,102,241,0.25);
+}
 
 /* ═══════════ FREE BANNER ═══════════ */
 .free-banner {
