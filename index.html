@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SignalAudit — Free Meta CAPI Diagnostic for Advertisers</title>
+  <meta name="description" content="Is Meta getting your real conversion data? Get a free CAPI signal audit that shows exactly how much revenue your broken tracking is costing you — in 3 minutes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="bg-blob b1"></div>
+  <div class="bg-blob b2"></div>
+  <div class="bg-blob b3"></div>
+
+  <!-- ══ NAV ══ -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-mark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        Signal<strong>Audit</strong>
+      </a>
+      <div class="nav-links">
+        <a href="#problem"      class="nav-link" data-i18n="nav_problem">The Problem</a>
+        <a href="#how-it-works" class="nav-link" data-i18n="nav_howItWorks">How It Works</a>
+        <a href="#services"     class="nav-link" data-i18n="nav_services">Services</a>
+        <a href="#video"        class="nav-link" data-i18n="nav_learnMore">Learn More</a>
+      </div>
+
+      <!-- Lang Switcher -->
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-trigger" onclick="toggleLangMenu(event)" aria-label="Change language">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span class="lang-current">EN</span>
+          <svg class="lang-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="lang-dropdown" id="langDropdown">
+          <button class="lang-option active" data-lang="en" onclick="setLang('en')">
+            <span class="lang-flag">🇬🇧</span><span class="lang-option-name">English</span><span class="lang-check">✓</span>
+          </button>
+          <button class="lang-option" data-lang="ar" onclick="setLang('ar')">
+            <span class="lang-flag">🇸🇦</span><span class="lang-option-name">العربية</span><span class="lang-check">✓</span>
+          </button>
+          <button class="lang-option" data-lang="fr" onclick="setLang('fr')">
+            <span class="lang-flag">🇫🇷</span><span class="lang-option-name">Français</span><span class="lang-check">✓</span>
+          </button>
+        </div>
+      </div>
+
+      <a href="audit.html" class="nav-cta" data-i18n="nav_freeAudit">
+        Free Audit
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#problem"      onclick="toggleMenu()" data-i18n="nav_problem">The Problem</a>
+      <a href="#how-it-works" onclick="toggleMenu()" data-i18n="nav_howItWorks">How It Works</a>
+      <a href="#services"     onclick="toggleMenu()" data-i18n="nav_services">Services</a>
+      <a href="#video"        onclick="toggleMenu()" data-i18n="nav_learnMore">Learn More</a>
+      <a href="audit.html" class="mobile-cta" data-i18n="nav_freeAudit">Start Free Audit →</a>
+    </div>
+  </nav>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="eyebrow">
+          <span class="dot"></span>
+          <span data-i18n="hero_eyebrow">Free Signal Diagnostic — No Account Required</span>
+        </div>
+        <h1><span data-i18n="hero_h1_line1">Your Meta Ads Are Running on</span><br/><span class="grad" data-i18n="hero_h1_line2">Broken Data.</span></h1>
+        <p class="hero-sub" data-i18n-html="hero_sub">iOS 14, Safari cookie blocks, and ad blockers mean up to <strong>60% of your conversions</strong> never reach Meta's algorithm. Your ROAS looks fine. Your CPA seems OK. But the machine is optimizing on <em>fragments</em>.</p>
+        <div class="hero-actions">
+          <a href="audit.html" class="btn-primary btn-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span data-i18n="hero_cta1">Get My Free Audit</span>
+          </a>
+          <a href="#video" class="btn-ghost btn-lg">
+            <span class="play-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </span>
+            <span data-i18n="hero_cta2">Watch Explainer</span>
+          </a>
+        </div>
+        <div class="hero-proof">
+          <div class="proof-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="hero_proof1">Takes 3 minutes</span>
+          </div>
+          <div class="proof-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="hero_proof2">Gives you a downloadable PDF report</span>
+          </div>
+          <div class="proof-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span data-i18n="hero_proof3">100% free — no credit card</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual -->
+      <div class="hero-visual">
+        <div class="mock-card">
+          <div class="mock-header">
+            <div class="mock-dots"><span></span><span></span><span></span></div>
+            <div class="mock-title" data-i18n="mock_before_title">Signal Health Overview</div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-gauge-row">
+              <div class="gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 120 120">
+                  <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+                  <circle class="gauge-fill bad" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="220"/>
+                </svg>
+                <div class="gauge-label">
+                  <div class="gauge-num bad">3.2</div>
+                  <div class="gauge-sub" data-i18n="mock_emq">EMQ Score</div>
+                </div>
+              </div>
+              <div class="gauge-stats">
+                <div class="g-stat">
+                  <div class="g-stat-label" data-i18n="mock_match_rate">Match Rate</div>
+                  <div class="g-stat-bar"><div class="g-stat-fill" style="width:31%;background:#ef4444"></div></div>
+                  <div class="g-stat-pct bad-c">31%</div>
+                </div>
+                <div class="g-stat">
+                  <div class="g-stat-label" data-i18n="mock_events">Events Matched</div>
+                  <div class="g-stat-bar"><div class="g-stat-fill" style="width:44%;background:#f97316"></div></div>
+                  <div class="g-stat-pct" style="color:#f97316">44%</div>
+                </div>
+                <div class="g-stat">
+                  <div class="g-stat-label" data-i18n="mock_loss">Signal Loss</div>
+                  <div class="g-stat-bar"><div class="g-stat-fill" style="width:56%;background:#ef4444"></div></div>
+                  <div class="g-stat-pct bad-c">~56%</div>
+                </div>
+              </div>
+            </div>
+            <div class="mock-issues">
+              <div class="mock-issue red" data-i18n="mock_issue1">🔌 No CAPI configured</div>
+              <div class="mock-issue orange" data-i18n="mock_issue2">🔁 Deduplication broken</div>
+              <div class="mock-issue yellow" data-i18n="mock_issue3">👤 Missing identity signals</div>
+            </div>
+          </div>
+          <div class="mock-arrow">→</div>
+          <div class="mock-card after">
+            <div class="mock-header">
+              <div class="mock-dots"><span></span><span></span><span></span></div>
+              <div class="mock-title" data-i18n="mock_after_title">After Implementation</div>
+            </div>
+            <div class="mock-body">
+              <div class="mock-gauge-row">
+                <div class="gauge-wrap">
+                  <svg class="gauge-svg" viewBox="0 0 120 120">
+                    <circle class="gauge-bg" cx="60" cy="60" r="50"/>
+                    <circle class="gauge-fill good" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="45"/>
+                  </svg>
+                  <div class="gauge-label">
+                    <div class="gauge-num good">9.1</div>
+                    <div class="gauge-sub" data-i18n="mock_emq">EMQ Score</div>
+                  </div>
+                </div>
+                <div class="gauge-stats">
+                  <div class="g-stat">
+                    <div class="g-stat-label" data-i18n="mock_match_rate">Match Rate</div>
+                    <div class="g-stat-bar"><div class="g-stat-fill" style="width:91%;background:#22c55e"></div></div>
+                    <div class="g-stat-pct good-c">91%</div>
+                  </div>
+                  <div class="g-stat">
+                    <div class="g-stat-label" data-i18n="mock_events">Events Matched</div>
+                    <div class="g-stat-bar"><div class="g-stat-fill" style="width:95%;background:#22c55e"></div></div>
+                    <div class="g-stat-pct good-c">95%</div>
+                  </div>
+                  <div class="g-stat">
+                    <div class="g-stat-label" data-i18n="mock_loss">Signal Loss</div>
+                    <div class="g-stat-bar"><div class="g-stat-fill" style="width:5%;background:#22c55e"></div></div>
+                    <div class="g-stat-pct good-c">~5%</div>
+                  </div>
+                </div>
+              </div>
+              <div class="mock-issues">
+                <div class="mock-issue green" data-i18n="mock_fix1">✅ CAPI Active &amp; Verified</div>
+                <div class="mock-issue green" data-i18n="mock_fix2">✅ Deduplication Confirmed</div>
+                <div class="mock-issue green" data-i18n="mock_fix3">✅ 7 Identity Signals Active</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </section>
+
+  <!-- ══ TRUST BAR ══ -->
+  <div class="trust-bar">
+    <div class="trust-inner">
+      <span class="trust-label" data-i18n="trust_label">Works with data from</span>
+      <div class="trust-logos">
+        <div class="tlogo">🛍️ Shopify</div>
+        <div class="tlogo">🔴 WooCommerce</div>
+        <div class="tlogo">🟠 HubSpot</div>
+        <div class="tlogo">📊 Salesforce</div>
+        <div class="tlogo">📋 Zoho</div>
+        <div class="tlogo">📁 Google Sheets</div>
+        <div class="tlogo">⚡ Zapier</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ THE PROBLEM ══ -->
+  <section class="section" id="problem">
+    <div class="container">
+      <div class="section-badge danger" data-i18n="problem_badge">The Silent Crisis</div>
+      <h2 class="section-title" data-i18n-html="problem_title">Three forces are destroying<br/>your ad attribution</h2>
+      <p class="section-sub" data-i18n="problem_sub">These aren't future risks. They are actively degrading your campaigns right now.</p>
+
+      <div class="crisis-grid">
+        <div class="crisis-card reveal">
+          <div class="crisis-num" data-i18n="crisis1_num">01</div>
+          <div class="crisis-icon">🍎</div>
+          <h3 data-i18n="crisis1_title">Apple's ATT Framework</h3>
+          <p data-i18n-html="crisis1_body">Since iOS 14.5 (2021), users are prompted "Allow tracking?" — and <strong>62% say no</strong>.</p>
+          <div class="crisis-stat">
+            <div class="cstat-label" data-i18n="crisis1_stat">iOS audience lost to opt-out</div>
+            <div class="cstat-bar"><div class="cstat-fill" style="width:62%"></div></div>
+            <div class="cstat-val" data-i18n="crisis1_val">62%</div>
+          </div>
+        </div>
+        <div class="crisis-card reveal">
+          <div class="crisis-num" data-i18n="crisis2_num">02</div>
+          <div class="crisis-icon">🛡️</div>
+          <h3 data-i18n="crisis2_title">Browser Cookie Restrictions</h3>
+          <p data-i18n-html="crisis2_body">Safari's ITP limits first-party cookies to <strong>7 days</strong>.</p>
+          <div class="crisis-stat">
+            <div class="cstat-label" data-i18n="crisis2_stat">Users blocking the Pixel</div>
+            <div class="cstat-bar"><div class="cstat-fill" style="width:40%"></div></div>
+            <div class="cstat-val" data-i18n="crisis2_val">40%</div>
+          </div>
+        </div>
+        <div class="crisis-card reveal">
+          <div class="crisis-num" data-i18n="crisis3_num">03</div>
+          <div class="crisis-icon">📉</div>
+          <h3 data-i18n="crisis3_title">Attribution Window Cuts</h3>
+          <p data-i18n-html="crisis3_body">Meta removed 7-day view and 28-day view attribution windows in January 2026.</p>
+          <div class="crisis-stat">
+            <div class="cstat-label" data-i18n="crisis3_stat">Reported conversions dropped by</div>
+            <div class="cstat-bar"><div class="cstat-fill" style="width:40%"></div></div>
+            <div class="cstat-val" data-i18n="crisis3_val">up to 40%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Infograph -->
+      <div class="infograph reveal">
+        <div class="infograph-title" data-i18n="infograph_title">The Result: What Pixel-Only Tracking Actually Sees</div>
+        <div class="infograph-body">
+          <div class="funnel-wrap">
+            <div class="funnel-step"><div class="funnel-bar" style="width:100%"><span data-i18n="funnel_step1">100 Actual Conversions</span></div></div>
+            <div class="funnel-arrow" data-i18n="funnel_arrow1">↓ iOS opt-outs block ~28</div>
+            <div class="funnel-step"><div class="funnel-bar" style="width:72%;background:rgba(249,115,22,0.25);border-color:rgba(249,115,22,0.5)"><span data-i18n="funnel_step2">72 remaining</span></div></div>
+            <div class="funnel-arrow" data-i18n="funnel_arrow2">↓ Ad blockers remove ~18 more</div>
+            <div class="funnel-step"><div class="funnel-bar" style="width:54%;background:rgba(239,68,68,0.2);border-color:rgba(239,68,68,0.4)"><span data-i18n="funnel_step3">54 remaining</span></div></div>
+            <div class="funnel-arrow" data-i18n="funnel_arrow3">↓ Cookie expiry / ITP removes ~14 more</div>
+            <div class="funnel-step"><div class="funnel-bar" style="width:40%;background:rgba(239,68,68,0.3);border-color:rgba(239,68,68,0.6)"><span style="color:#fca5a5" data-i18n="funnel_step4">Only 40 reach Meta</span></div></div>
+          </div>
+          <div class="infograph-right">
+            <div class="infograph-big-num">60%</div>
+            <div class="infograph-big-label" data-i18n-html="infograph_bigLabel">of your conversions<br/>never reach Meta's<br/>algorithm</div>
+            <div class="infograph-caption" data-i18n="infograph_caption">With Pixel-only tracking, the average store reports fewer than half its actual conversions.</div>
+            <a href="audit.html" class="btn-primary" style="margin-top:20px"><span data-i18n="infograph_btn">Find My Gap →</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ VIDEO ══ -->
+  <section class="section section-dark" id="video">
+    <div class="container">
+      <div class="section-badge" data-i18n="video_badge">Learn</div>
+      <h2 class="section-title" data-i18n-html="video_title">Understand Why Signal Quality<br/>Is the New Competitive Advantage</h2>
+      <p class="section-sub" data-i18n="video_sub">This video explains what CAPI is, why the Pixel is no longer enough, and why the brands winning on Meta in 2025 are the ones with the cleanest data infrastructure.</p>
+      <div class="video-wrap reveal">
+        <div class="video-frame">
+          <iframe src="https://www.youtube.com/embed/6qgNfVnOtSI?rel=0&modestbranding=1&color=white" title="Meta Conversions API Explained" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">
+          <div class="vc-item">
+            <div class="vc-icon">🔌</div>
+            <div><strong data-i18n="vc1_title">What CAPI is</strong> <span data-i18n="vc1_body">— and why it bypasses all browser restrictions</span></div>
+          </div>
+          <div class="vc-item">
+            <div class="vc-icon">📊</div>
+            <div><strong data-i18n="vc2_title">Why EMQ score matters</strong> <span data-i18n="vc2_body">— and how to get yours above 8.8</span></div>
+          </div>
+          <div class="vc-item">
+            <div class="vc-icon">⚠️</div>
+            <div><strong data-i18n="vc3_title">The deduplication trap</strong> <span data-i18n="vc3_body">— why running both Pixel + CAPI wrong is worse than one</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HOW IT WORKS ══ -->
+  <section class="section" id="how-it-works">
+    <div class="container">
+      <div class="section-badge accent" data-i18n="how_badge">How CAPI Fixes It</div>
+      <h2 class="section-title" data-i18n-html="how_title">From broken signals to<br/>crystal-clear attribution</h2>
+      <p class="section-sub" data-i18n="how_sub">CAPI bypasses the browser entirely — a direct, server-to-server line from your business to Meta.</p>
+
+      <div class="flow-diagram reveal">
+        <div class="flow-step">
+          <div class="flow-icon" style="background:linear-gradient(135deg,#6366f1,#7c3aed)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="flow-content">
+            <div class="flow-num" data-i18n="flow1_num">01</div>
+            <div class="flow-title" data-i18n="flow1_title">Customer Clicks Your Ad</div>
+            <div class="flow-body" data-i18n="flow1_body">They land on your website. Your server quietly assigns them a unique identifier — not dependent on cookies or browser permissions.</div>
+          </div>
+        </div>
+        <div class="flow-connector"></div>
+        <div class="flow-step">
+          <div class="flow-icon" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+          </div>
+          <div class="flow-content">
+            <div class="flow-num" data-i18n="flow2_num">02</div>
+            <div class="flow-title" data-i18n="flow2_title">Conversion Happens</div>
+            <div class="flow-body" data-i18n-html="flow2_body">They complete a purchase, fill a form, or visit your store. Your <strong>server</strong> captures this — not the browser.</div>
+          </div>
+        </div>
+        <div class="flow-connector"></div>
+        <div class="flow-step">
+          <div class="flow-icon" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div class="flow-content">
+            <div class="flow-num" data-i18n="flow3_num">03</div>
+            <div class="flow-title" data-i18n="flow3_title">Direct Line to Meta</div>
+            <div class="flow-body" data-i18n="flow3_body">Your server fires an API call directly to Meta. Ad blockers, iOS opt-outs, Safari ITP — none of them can intercept a server-to-server call. Meta attributes the sale.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare-grid reveal">
+        <div class="compare-card before-card">
+          <div class="compare-label before" data-i18n="compare_before_label">⚠️ Without CAPI</div>
+          <ul class="compare-list" id="compareBeforeList">
+            <li class="bad-item">Browser fires Pixel → blocked by iOS, ad-blockers, ITP</li>
+            <li class="bad-item">40% of conversions attributed on a good day</li>
+            <li class="bad-item">EMQ score: 2–4 (poor match quality)</li>
+            <li class="bad-item">Algorithm optimizes for <em>partial</em> data</li>
+            <li class="bad-item">Offline &amp; CRM conversions: invisible</li>
+            <li class="bad-item">Duplicate events inflate conversion count</li>
+          </ul>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-card after-card">
+          <div class="compare-label after" data-i18n="compare_after_label">✅ With CAPI + Enrichment</div>
+          <ul class="compare-list" id="compareAfterList">
+            <li class="good-item">Server fires API → reaches Meta 100% of the time</li>
+            <li class="good-item">85–95% of conversions attributed accurately</li>
+            <li class="good-item">EMQ score: 8.8–9.3 (elite range)</li>
+            <li class="good-item">Algorithm has real signal → better audiences</li>
+            <li class="good-item">Offline &amp; CRM data flows through CAPI</li>
+            <li class="good-item">Perfect deduplication preserves data integrity</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SERVICES ══ -->
+  <section class="section section-dark" id="services">
+    <div class="container">
+      <div class="section-badge accent" data-i18n="services_badge">What We Do</div>
+      <h2 class="section-title" data-i18n-html="services_title">Five ways we fix your<br/>signal infrastructure</h2>
+      <p class="section-sub" data-i18n="services_sub">Whether you have no CAPI at all or a broken implementation, we diagnose and fix every layer of your data pipeline.</p>
+      <div class="services-grid">
+        <div class="service-card reveal featured-service">
+          <div class="service-badge" data-i18n="svc1_badge">Most In-Demand</div>
+          <div class="service-icon" style="background:linear-gradient(135deg,#6366f1,#7c3aed)">🔌</div>
+          <h3 data-i18n="svc1_title">CAPI Implementation</h3>
+          <p data-i18n="svc1_body">We build the server-side connection from scratch — event receiver, identity hasher, deduplication layer, and Meta API sender.</p>
+          <div class="service-tags"><span>Shopify</span><span>WooCommerce</span><span>Custom</span></div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">✨</div>
+          <h3 data-i18n="svc2_title">Data Enrichment</h3>
+          <p data-i18n="svc2_body">We pipe your CRM data through CAPI to dramatically boost your EMQ score and audience match quality.</p>
+          <div class="service-tags"><span>HubSpot</span><span>Salesforce</span><span>Zoho</span></div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon" style="background:linear-gradient(135deg,#f59e0b,#f97316)">🏪</div>
+          <h3 data-i18n="svc3_title">Offline Conversion Sync</h3>
+          <p data-i18n="svc3_body">Meta discontinued its Offline Conversions API in May 2025. We migrate your in-store and CRM-based conversions to flow through CAPI.</p>
+          <div class="service-tags"><span>POS Systems</span><span>Phone Sales</span><span>In-Store</span></div>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon" style="background:linear-gradient(135deg,#ef4444,#f97316)">🔍</div>
+          <h3 data-i18n="svc4_title">Deduplication Auditing</h3>
+          <p data-i18n="svc4_body">4 out of 12 CAPI setups we've audited had broken deduplication — creating inflated conversion counts that mask real CPA degradation.</p>
+          <div class="service-tags"><span>Event ID Setup</span><span>CPA Correction</span></div>
+        </div>
+        <div class="service-card reveal" style="grid-column: span 2;">
+          <div class="service-icon" style="background:linear-gradient(135deg,#22c55e,#0ea5e9)">📊</div>
+          <h3 data-i18n="svc5_title">Ongoing Signal Monitoring</h3>
+          <p data-i18n="svc5_body">A live dashboard tracking your EMQ score, event match rates, and attribution health — with automatic alerts when signal quality degrades.</p>
+          <div class="service-tags"><span>EMQ Tracking</span><span>Match Rate</span><span>Weekly Reports</span><span>Slack Alerts</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ WHY FREE ══ -->
+  <section class="section" id="why-free">
+    <div class="container">
+      <div class="free-banner reveal">
+        <div class="free-left">
+          <div class="free-icon">🎁</div>
+          <div>
+            <h2 data-i18n="free_h2">Why is the audit completely free?</h2>
+            <p data-i18n="free_p">Because the biggest obstacle isn't price — it's visibility. Most advertisers don't realize they have a problem until we show them the numbers.</p>
+          </div>
+        </div>
+        <div class="free-steps">
+          <div class="free-step">
+            <div class="fstep-num">1</div>
+            <div><strong data-i18n="fstep1_title">Take the audit</strong><span data-i18n="fstep1_desc">3 minutes, 15 questions</span></div>
+          </div>
+          <div class="fstep-arrow">→</div>
+          <div class="free-step">
+            <div class="fstep-num">2</div>
+            <div><strong data-i18n="fstep2_title">Download your report</strong><span data-i18n="fstep2_desc">PDF with every issue found</span></div>
+          </div>
+          <div class="fstep-arrow">→</div>
+          <div class="free-step">
+            <div class="fstep-num">3</div>
+            <div><strong data-i18n="fstep3_title">We reach out</strong><span data-i18n="fstep3_desc">Only if you want help fixing it</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FINAL CTA ══ -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-block reveal">
+        <div class="cta-glow"></div>
+        <div class="cta-content">
+          <h2 data-i18n-html="cta_h2">Ready to see what Meta<br/>isn't seeing?</h2>
+          <p data-i18n="cta_p">Get your Signal Health Score in 3 minutes.</p>
+          <a href="audit.html" class="btn-primary btn-xl">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span data-i18n="cta_btn">Start My Free Audit</span>
+          </a>
+          <div class="cta-proof">
+            <span data-i18n="cta_proof1">✓ Free forever</span>
+            <span data-i18n="cta_proof2">✓ No account needed</span>
+            <span data-i18n="cta_proof3">✓ Instant PDF report</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <div class="logo-mark sm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+        Signal<strong>Audit</strong>
+      </div>
+      <div class="footer-links">
+        <a href="#problem"      data-i18n="nav_problem">The Problem</a>
+        <a href="#how-it-works" data-i18n="nav_howItWorks">How It Works</a>
+        <a href="#services"     data-i18n="nav_services">Services</a>
+        <a href="audit.html"    data-i18n="nav_freeAudit">Free Audit →</a>
+      </div>
+      <div class="footer-copy" data-i18n="footer_copy">© 2025 SignalAudit. Independent CAPI services. Not affiliated with Meta.</div>
+    </div>
+  </footer>
+
+  <script src="i18n.js"></script>
+  <script src="landing.js"></script>
+  <script>
+    /* ── Compare lists (depends on current language) ── */
+    function updateCompareLists() {
+      const beforeItems = t('compare_before');
+      const afterItems  = t('compare_after');
+      const beforeList  = document.getElementById('compareBeforeList');
+      const afterList   = document.getElementById('compareAfterList');
+      if (beforeList && Array.isArray(beforeItems)) {
+        beforeList.innerHTML = beforeItems.map(function(i){ return '<li class="bad-item">' + i + '</li>'; }).join('');
+      }
+      if (afterList && Array.isArray(afterItems)) {
+        afterList.innerHTML = afterItems.map(function(i){ return '<li class="good-item">' + i + '</li>'; }).join('');
+      }
+    }
+
+    /* ── Hook into i18n.js setLang WITHOUT overriding (avoids hoisting bug) ── */
+    window._onLangChange = function() { updateCompareLists(); };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      applyTranslations();
+      updateCompareLists();
+    });
+  </script>
+
+</body>
+</html>

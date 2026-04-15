@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Meta CAPI Audit — Signal Health Diagnostic</title>
+  <meta name="description" content="Answer 15 questions about your current Meta tracking setup. Get an instant Signal Health Score and a professional PDF report showing what's broken and how to fix it." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .audit-nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(8,11,20,0.9); backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .audit-nav-inner {
+      max-width: 900px; margin: 0 auto;
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 24px; height: 60px;
+    }
+    .audit-nav-logo {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 16px; font-weight: 600; color: #f1f5f9;
+      text-decoration: none; flex-shrink: 0; margin-inline-end: 4px;
+    }
+    .audit-nav-logo strong { color: #818cf8; }
+    .audit-logo-mark {
+      width: 30px; height: 30px; border-radius: 9px;
+      background: linear-gradient(135deg, #6366f1, #7c3aed);
+      display: flex; align-items: center; justify-content: center; color: white;
+    }
+    .nav-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.1); flex-shrink: 0; }
+    .audit-nav-pages {
+      display: flex; align-items: center; gap: 2px; flex: 1; overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .audit-nav-pages::-webkit-scrollbar { display: none; }
+    .audit-nav-page {
+      display: flex; align-items: center; gap: 7px;
+      padding: 6px 12px; border-radius: 8px;
+      font-size: 12px; font-weight: 600; color: #475569;
+      white-space: nowrap; cursor: pointer;
+      transition: all 0.2s; border: 1px solid transparent;
+      pointer-events: none; user-select: none;
+    }
+    .audit-nav-page.done { color: #22c55e; pointer-events: auto; }
+    .audit-nav-page.done:hover { background: rgba(34,197,94,0.08); border-color: rgba(34,197,94,0.2); }
+    .audit-nav-page.active { color: #818cf8; background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.2); }
+    .audit-nav-page .pg-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; flex-shrink: 0;
+    }
+    .audit-nav-page.done .pg-num   { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.3); }
+    .audit-nav-page.active .pg-num { background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.4); }
+    .pg-arrow { color: #334155; font-size: 14px; }
+    [dir="rtl"] .pg-arrow { transform: scaleX(-1); }
+    .audit-nav-back {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 14px; border-radius: 8px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+      color: #64748b; font-size: 13px; font-weight: 500;
+      text-decoration: none; flex-shrink: 0; transition: all 0.2s;
+    }
+    .audit-nav-back:hover { color: #f1f5f9; background: rgba(255,255,255,0.07); }
+    [dir="rtl"] .audit-nav-back svg { transform: scaleX(-1); }
+  </style>
+</head>
+<body>
+
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <!-- ══ AUDIT NAV ══ -->
+  <nav class="audit-nav">
+    <div class="audit-nav-inner">
+      <a href="index.html" class="audit-nav-logo">
+        <div class="audit-logo-mark">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        Signal<strong>Audit</strong>
+      </a>
+      <div class="nav-divider"></div>
+      <div class="audit-nav-pages" id="auditNavPages">
+        <div class="audit-nav-page active" id="navp-0" data-step="0">
+          <div class="pg-num">1</div><span data-i18n="navp_start">Start</span>
+        </div>
+        <span class="pg-arrow">›</span>
+        <div class="audit-nav-page" id="navp-1" data-step="1">
+          <div class="pg-num">2</div><span data-i18n="navp_business">Business</span>
+        </div>
+        <span class="pg-arrow">›</span>
+        <div class="audit-nav-page" id="navp-2" data-step="2">
+          <div class="pg-num">3</div><span data-i18n="navp_tracking">Tracking</span>
+        </div>
+        <span class="pg-arrow">›</span>
+        <div class="audit-nav-page" id="navp-3" data-step="3">
+          <div class="pg-num">4</div><span data-i18n="navp_events">Events</span>
+        </div>
+        <span class="pg-arrow">›</span>
+        <div class="audit-nav-page" id="navp-4" data-step="4">
+          <div class="pg-num">5</div><span data-i18n="navp_datasources">Data Sources</span>
+        </div>
+        <span class="pg-arrow">›</span>
+        <div class="audit-nav-page" id="navp-5" data-step="5">
+          <div class="pg-num">✓</div><span data-i18n="navp_results">Results</span>
+        </div>
+      </div>
+
+      <!-- Lang Switcher -->
+      <div class="lang-switcher" id="langSwitcher">
+        <button class="lang-trigger" onclick="toggleLangMenu(event)" aria-label="Change language">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span class="lang-current">EN</span>
+          <svg class="lang-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="lang-dropdown">
+          <button class="lang-option active" data-lang="en" onclick="setLang('en')">
+            <span class="lang-flag">🇬🇧</span><span class="lang-option-name">English</span><span class="lang-check">✓</span>
+          </button>
+          <button class="lang-option" data-lang="ar" onclick="setLang('ar')">
+            <span class="lang-flag">🇸🇦</span><span class="lang-option-name">العربية</span><span class="lang-check">✓</span>
+          </button>
+          <button class="lang-option" data-lang="fr" onclick="setLang('fr')">
+            <span class="lang-flag">🇫🇷</span><span class="lang-option-name">Français</span><span class="lang-check">✓</span>
+          </button>
+        </div>
+      </div>
+
+      <a href="index.html" class="audit-nav-back">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span data-i18n="nav_backToSite">Back to site</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <main class="main-container">
+
+    <!-- ══ STEP 0 ══ -->
+    <section class="step active" id="step-0">
+      <div class="hero-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span data-i18n="audit_badge">Most advertisers are losing 40–60% of their conversion signals</span>
+      </div>
+      <h1 class="hero-title">
+        <span data-i18n="audit_h1_1">Free Meta Signal</span><br/>
+        <span class="gradient-text" data-i18n="audit_h1_2">Diagnostic Audit</span>
+      </h1>
+      <p class="hero-sub" data-i18n="audit_sub">Answer 15 quick questions about your current tracking setup.</p>
+
+      <div class="stat-strip">
+        <div class="stat-item">
+          <div class="stat-number" data-i18n="stat1_num">~3 min</div>
+          <div class="stat-label" data-i18n="stat1_label">to complete the audit</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number" data-i18n="stat2_num">15</div>
+          <div class="stat-label" data-i18n="stat2_label">diagnostic questions</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <div class="stat-number" data-i18n="stat3_num">PDF</div>
+          <div class="stat-label" data-i18n="stat3_label">professional report to download</div>
+        </div>
+      </div>
+
+      <div class="hero-form-group">
+        <label for="clientName" data-i18n="form_name_label">Your Name</label>
+        <input type="text" id="clientName" data-i18n-ph="form_name_ph" placeholder="e.g. Alex Johnson" autocomplete="name" />
+        <label for="businessName" data-i18n="form_business_label">Business Name</label>
+        <input type="text" id="businessName" data-i18n-ph="form_business_ph" placeholder="e.g. Acme Digital" autocomplete="organization" />
+        <label for="websiteUrl" data-i18n="form_website_label">Website URL</label>
+        <input type="url" id="websiteUrl" data-i18n-ph="form_website_ph" placeholder="https://yourwebsite.com" autocomplete="url" />
+        <label for="auditorEmail" data-i18n="form_email_label">Your Email (for the report)</label>
+        <input type="email" id="auditorEmail" data-i18n-ph="form_email_ph" placeholder="contact@example.com" autocomplete="email" />
+      </div>
+
+      <button class="btn-primary" id="startBtn" onclick="goToStep(1)">
+        <span data-i18n="start_btn">Start Free Audit</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <p class="hero-note" data-i18n="audit_note">Takes about 3 minutes. No account needed.</p>
+    </section>
+
+    <!-- ══ STEP 1 ══ -->
+    <section class="step" id="step-1">
+      <div class="step-label" data-i18n="step1_label">Step 1 of 5 — Business Context</div>
+      <h2 class="step-title" data-i18n="step1_title">Tell us about your advertising</h2>
+      <p class="step-sub" data-i18n="step1_sub">This helps us weight your signal loss accurately.</p>
+      <div class="question-card">
+        <div class="q-label" data-i18n="spend_q">Monthly Meta ad spend</div>
+        <div class="option-grid" id="q_spend">
+          <div class="option-btn" data-q="spend" data-v="0" data-i18n="spend_v0" onclick="selectOption(this)">Under $1,000</div>
+          <div class="option-btn" data-q="spend" data-v="1" data-i18n="spend_v1" onclick="selectOption(this)">$1,000 – $5,000</div>
+          <div class="option-btn" data-q="spend" data-v="2" data-i18n="spend_v2" onclick="selectOption(this)">$5,000 – $20,000</div>
+          <div class="option-btn" data-q="spend" data-v="3" data-i18n="spend_v3" onclick="selectOption(this)">$20,000+</div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="industry_q">Industry</div>
+        <div class="option-grid" id="q_industry">
+          <div class="option-btn" data-q="industry" data-v="ecom"     data-i18n="industry_ecom"     onclick="selectOption(this)">E-Commerce</div>
+          <div class="option-btn" data-q="industry" data-v="leadgen"  data-i18n="industry_leadgen"  onclick="selectOption(this)">Lead Generation</div>
+          <div class="option-btn" data-q="industry" data-v="retail"   data-i18n="industry_retail"   onclick="selectOption(this)">Retail / Physical Store</div>
+          <div class="option-btn" data-q="industry" data-v="saas"     data-i18n="industry_saas"     onclick="selectOption(this)">SaaS / Apps</div>
+          <div class="option-btn" data-q="industry" data-v="services" data-i18n="industry_services" onclick="selectOption(this)">Services / Agency</div>
+          <div class="option-btn" data-q="industry" data-v="other"    data-i18n="industry_other"    onclick="selectOption(this)">Other</div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="goal_q">Primary conversion goal</div>
+        <div class="option-grid" id="q_goal">
+          <div class="option-btn" data-q="goal" data-v="purchase"     data-i18n="goal_purchase"     onclick="selectOption(this)">Online Purchase</div>
+          <div class="option-btn" data-q="goal" data-v="lead"         data-i18n="goal_lead"         onclick="selectOption(this)">Lead / Form Fill</div>
+          <div class="option-btn" data-q="goal" data-v="call"         data-i18n="goal_call"         onclick="selectOption(this)">Phone Call</div>
+          <div class="option-btn" data-q="goal" data-v="visit"        data-i18n="goal_visit"        onclick="selectOption(this)">In-Store Visit</div>
+          <div class="option-btn" data-q="goal" data-v="registration" data-i18n="goal_registration" onclick="selectOption(this)">Registration / Signup</div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goToStep(0)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" onclick="goToStep(2)" data-i18n="btn_continue">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ══ STEP 2 ══ -->
+    <section class="step" id="step-2">
+      <div class="step-label" data-i18n="step2_label">Step 2 of 5 — Current Tracking Setup</div>
+      <h2 class="step-title" data-i18n="step2_title">How is your tracking configured today?</h2>
+      <p class="step-sub" data-i18n="step2_sub">Be honest — there are no wrong answers. This is a diagnostic.</p>
+      <div class="question-card">
+        <div class="q-label" data-i18n="pixel_q">Do you have the Meta Pixel installed?</div>
+        <div class="option-grid" id="q_pixel">
+          <div class="option-btn" data-q="pixel" data-v="yes"     data-i18n="pixel_yes"     onclick="selectOption(this)">✅ Yes, it's installed</div>
+          <div class="option-btn" data-q="pixel" data-v="partial" data-i18n="pixel_partial" onclick="selectOption(this)">⚠️ Partially</div>
+          <div class="option-btn" data-q="pixel" data-v="no"      data-i18n="pixel_no"      onclick="selectOption(this)">❌ No</div>
+          <div class="option-btn" data-q="pixel" data-v="unsure"  data-i18n="pixel_unsure"  onclick="selectOption(this)">🤷 Not sure</div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="capi_q">Do you have CAPI set up?</div>
+        <div class="q-hint" data-i18n="capi_hint">CAPI is a server-side connection separate from the browser Pixel</div>
+        <div class="option-grid" id="q_capi">
+          <div class="option-btn" data-q="capi" data-v="yes"    data-i18n="capi_yes"    onclick="selectOption(this)">✅ Yes, it's running</div>
+          <div class="option-btn" data-q="capi" data-v="no"     data-i18n="capi_no"     onclick="selectOption(this)">❌ No</div>
+          <div class="option-btn" data-q="capi" data-v="unsure" data-i18n="capi_unsure" onclick="selectOption(this)">🤷 Not sure</div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="dedup_q">Is deduplication configured?</div>
+        <div class="q-hint" data-i18n="dedup_hint">Deduplication prevents the same event from being counted twice</div>
+        <div class="option-grid" id="q_dedup">
+          <div class="option-btn" data-q="dedup" data-v="yes"      data-i18n="dedup_yes"      onclick="selectOption(this)">✅ Yes, confirmed</div>
+          <div class="option-btn" data-q="dedup" data-v="probably" data-i18n="dedup_probably" onclick="selectOption(this)">🟡 Probably</div>
+          <div class="option-btn" data-q="dedup" data-v="no"       data-i18n="dedup_no"       onclick="selectOption(this)">❌ No</div>
+          <div class="option-btn" data-q="dedup" data-v="na"       data-i18n="dedup_na"       onclick="selectOption(this)">N/A</div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="capiMethod_q">How was CAPI implemented?</div>
+        <div class="option-grid" id="q_capiMethod">
+          <div class="option-btn" data-q="capiMethod" data-v="shopify" data-i18n="capiMethod_shopify" onclick="selectOption(this)">Shopify Native</div>
+          <div class="option-btn" data-q="capiMethod" data-v="gateway" data-i18n="capiMethod_gateway" onclick="selectOption(this)">Meta CAPI Gateway</div>
+          <div class="option-btn" data-q="capiMethod" data-v="custom"  data-i18n="capiMethod_custom"  onclick="selectOption(this)">Custom / Developer</div>
+          <div class="option-btn" data-q="capiMethod" data-v="partner" data-i18n="capiMethod_partner" onclick="selectOption(this)">Third-party partner</div>
+          <div class="option-btn" data-q="capiMethod" data-v="none"    data-i18n="capiMethod_none"    onclick="selectOption(this)">No CAPI set up</div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goToStep(1)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" onclick="goToStep(3)" data-i18n="btn_continue">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ══ STEP 3 ══ -->
+    <section class="step" id="step-3">
+      <div class="step-label" data-i18n="step3_label">Step 3 of 5 — Event &amp; Data Quality</div>
+      <h2 class="step-title" data-i18n="step3_title">What events and data do you track?</h2>
+      <p class="step-sub" data-i18n="step3_sub">The richness of your data directly determines your EMQ score.</p>
+      <div class="question-card">
+        <div class="q-label" data-i18n="events_q">Which conversion events are you tracking?</div>
+        <div class="checkbox-grid" id="q_events">
+          <label class="check-item"><input type="checkbox" value="purchase"    /><span data-i18n="event_purchase">Purchase / Sale</span></label>
+          <label class="check-item"><input type="checkbox" value="lead"        /><span data-i18n="event_lead">Lead / Form Submit</span></label>
+          <label class="check-item"><input type="checkbox" value="addtocart"   /><span data-i18n="event_addtocart">Add to Cart</span></label>
+          <label class="check-item"><input type="checkbox" value="checkout"    /><span data-i18n="event_checkout">Initiate Checkout</span></label>
+          <label class="check-item"><input type="checkbox" value="viewcontent" /><span data-i18n="event_viewcontent">View Content</span></label>
+          <label class="check-item"><input type="checkbox" value="search"      /><span data-i18n="event_search">Search</span></label>
+          <label class="check-item"><input type="checkbox" value="pagev"       /><span data-i18n="event_pagev">Page View</span></label>
+          <label class="check-item"><input type="checkbox" value="subscribe"   /><span data-i18n="event_subscribe">Subscribe / Registration</span></label>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="identity_q">What customer identity data do you pass?</div>
+        <div class="q-hint" data-i18n="identity_hint">More identity signals = higher EMQ score = better optimization</div>
+        <div class="checkbox-grid" id="q_identity">
+          <label class="check-item"><input type="checkbox" value="email"      /><span data-i18n="id_email">Email address</span></label>
+          <label class="check-item"><input type="checkbox" value="phone"      /><span data-i18n="id_phone">Phone number</span></label>
+          <label class="check-item"><input type="checkbox" value="name"       /><span data-i18n="id_name">First + Last name</span></label>
+          <label class="check-item"><input type="checkbox" value="city"       /><span data-i18n="id_city">City / Country</span></label>
+          <label class="check-item"><input type="checkbox" value="zip"        /><span data-i18n="id_zip">ZIP / Postal code</span></label>
+          <label class="check-item"><input type="checkbox" value="fbclid"     /><span data-i18n="id_fbclid">FBC / FBP click ID</span></label>
+          <label class="check-item"><input type="checkbox" value="externalid" /><span data-i18n="id_externalid">External / Customer ID</span></label>
+          <label class="check-item"><input type="checkbox" value="none"       /><span data-i18n="id_none">None of the above</span></label>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="emq_q">Do you know your current EMQ score?</div>
+        <div class="option-grid" id="q_emq">
+          <div class="option-btn" data-q="emq" data-v="high"    data-i18n="emq_high"    onclick="selectOption(this)">Yes — 8.0 or above</div>
+          <div class="option-btn" data-q="emq" data-v="mid"     data-i18n="emq_mid"     onclick="selectOption(this)">Yes — 5.0 to 7.9</div>
+          <div class="option-btn" data-q="emq" data-v="low"     data-i18n="emq_low"     onclick="selectOption(this)">Yes — Below 5.0</div>
+          <div class="option-btn" data-q="emq" data-v="unknown" data-i18n="emq_unknown" onclick="selectOption(this)">No / Don't know</div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goToStep(2)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" onclick="goToStep(4)" data-i18n="btn_continue">Continue →</button>
+      </div>
+    </section>
+
+    <!-- ══ STEP 4 ══ -->
+    <section class="step" id="step-4">
+      <div class="step-label" data-i18n="step4_label">Step 4 of 5 — Data Sources</div>
+      <h2 class="step-title" data-i18n="step4_title">Where does your customer data live?</h2>
+      <p class="step-sub" data-i18n="step4_sub">Untapped data sources are missed signals — we'll flag them in your report.</p>
+      <div class="question-card">
+        <div class="q-label" data-i18n="crm_q">Do you have a CRM?</div>
+        <div class="option-grid" id="q_crm">
+          <div class="option-btn" data-q="crm" data-v="hubspot"    data-i18n="crm_hubspot"    onclick="selectOption(this)">HubSpot</div>
+          <div class="option-btn" data-q="crm" data-v="salesforce" data-i18n="crm_salesforce" onclick="selectOption(this)">Salesforce</div>
+          <div class="option-btn" data-q="crm" data-v="zoho"       data-i18n="crm_zoho"       onclick="selectOption(this)">Zoho</div>
+          <div class="option-btn" data-q="crm" data-v="sheets"     data-i18n="crm_sheets"     onclick="selectOption(this)">Google Sheets / Excel</div>
+          <div class="option-btn" data-q="crm" data-v="other"      data-i18n="crm_other"      onclick="selectOption(this)">Other CRM</div>
+          <div class="option-btn" data-q="crm" data-v="none"       data-i18n="crm_none"       onclick="selectOption(this)">No CRM</div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="offline_q">Do you have offline sales?</div>
+        <div class="option-grid" id="q_offline">
+          <div class="option-btn" data-q="offline" data-v="yes_synced"   data-i18n="offline_synced"   onclick="selectOption(this)">Yes, synced to Meta</div>
+          <div class="option-btn" data-q="offline" data-v="yes_unsynced" data-i18n="offline_unsynced" onclick="selectOption(this)">Yes, NOT connected</div>
+          <div class="option-btn" data-q="offline" data-v="no"           data-i18n="offline_no"       onclick="selectOption(this)">No offline sales</div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="email_q">Do you have an email marketing list?</div>
+        <div class="option-grid" id="q_email">
+          <div class="option-btn" data-q="email_list" data-v="large"  data-i18n="email_large"  onclick="selectOption(this)">Yes — 10,000+</div>
+          <div class="option-btn" data-q="email_list" data-v="medium" data-i18n="email_medium" onclick="selectOption(this)">Yes — 1,000–10,000</div>
+          <div class="option-btn" data-q="email_list" data-v="small"  data-i18n="email_small"  onclick="selectOption(this)">Yes — Under 1,000</div>
+          <div class="option-btn" data-q="email_list" data-v="no"     data-i18n="email_no"     onclick="selectOption(this)">No email list</div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label" data-i18n="em_q">Has your team reviewed Meta's Events Manager recently?</div>
+        <div class="option-grid" id="q_eventsmanager">
+          <div class="option-btn" data-q="eventsmanager" data-v="regularly" data-i18n="em_regularly" onclick="selectOption(this)">Yes, regularly</div>
+          <div class="option-btn" data-q="eventsmanager" data-v="sometimes" data-i18n="em_sometimes" onclick="selectOption(this)">Occasionally</div>
+          <div class="option-btn" data-q="eventsmanager" data-v="never"     data-i18n="em_never"     onclick="selectOption(this)">Rarely or never</div>
+          <div class="option-btn" data-q="eventsmanager" data-v="unknown"   data-i18n="em_unknown"   onclick="selectOption(this)">I don't know what that is</div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn-back" onclick="goToStep(3)" data-i18n="btn_back">← Back</button>
+        <button class="btn-next" onclick="goToStep(5)" data-i18n="btn_calculate">Calculate My Score →</button>
+      </div>
+    </section>
+
+    <!-- ══ STEP 5: RESULTS ══ -->
+    <section class="step" id="step-5">
+      <div class="results-header">
+        <div class="step-label" data-i18n="results_label">Audit Complete</div>
+        <h2 class="step-title" id="resultsHeadline" data-i18n="results_default_h">Your Signal Health Report</h2>
+      </div>
+      <div class="score-section">
+        <div class="score-ring-wrap">
+          <svg class="score-ring" viewBox="0 0 200 200">
+            <circle class="ring-bg"   cx="100" cy="100" r="82"/>
+            <circle class="ring-fill" id="ringFill" cx="100" cy="100" r="82" stroke-dasharray="515" stroke-dashoffset="515"/>
+          </svg>
+          <div class="score-center">
+            <div class="score-number" id="scoreNumber">0</div>
+            <div class="score-label" data-i18n="score_label">Signal Score</div>
+          </div>
+        </div>
+        <div class="score-details">
+          <div class="score-grade" id="scoreGrade">—</div>
+          <div class="score-desc"  id="scoreDesc">—</div>
+          <div class="score-loss-box">
+            <div class="loss-label" data-i18n="loss_label">Estimated Signal Loss</div>
+            <div class="loss-value" id="lossValue">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-title-row">
+        <h3 data-i18n="issues_section">Issues Found</h3>
+        <div class="issue-count" id="issueCount">0</div>
+      </div>
+      <div class="issues-list" id="issuesList"></div>
+      <div class="section-title-row">
+        <h3 data-i18n="opps_section">Opportunities</h3>
+      </div>
+      <div class="opportunities-list" id="opportunitiesList"></div>
+      <div class="cta-card">
+        <div class="cta-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div class="cta-content">
+          <div class="cta-title" data-i18n="cta_card_title">Ready to Fix These Issues?</div>
+          <div class="cta-sub" data-i18n="cta_card_sub">Enter your email and we'll send your full PDF report directly to your inbox.</div>
+          <!-- Email input (pre-filled from step 0) -->
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center;">
+            <input type="email" id="reportEmailField"
+              style="flex:1;min-width:200px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:9px;padding:10px 14px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;"
+              data-i18n-ph="form_email_ph" placeholder="contact@example.com" />
+          </div>
+          <div id="emailStatus" style="margin-top:8px;min-height:20px;"></div>
+          <!-- Fallback direct download (hidden until email sent) -->
+          <div id="directDownloadWrap" style="display:none;margin-top:10px;">
+            <a href="#" onclick="directDownload();return false;"
+              style="color:#64748b;font-size:12px;text-decoration:underline;" data-i18n="email_direct_fallback">
+              Download directly instead →
+            </a>
+          </div>
+        </div>
+        <div class="cta-actions">
+          <button class="btn-primary" id="emailReportBtn" onclick="emailReport()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span data-i18n="btn_email_report">Email Me My Report</span>
+          </button>
+          <button class="btn-secondary" onclick="restartAudit()" data-i18n="btn_restart">Run Another Audit</button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="i18n.js"></script>
+  <script src="audit.js"></script>
+  <script>
+    /* ── updateNavPills: safe to declare (no name conflict) ── */
+    function updateNavPills(current) {
+      for (var i = 0; i <= 5; i++) {
+        var pill = document.getElementById('navp-' + i);
+        if (!pill) continue;
+        pill.classList.remove('active', 'done');
+        if (i < current)       pill.classList.add('done');
+        else if (i === current) pill.classList.add('active');
+      }
+      document.querySelectorAll('.audit-nav-page.done').forEach(function(p) {
+        p.onclick = function() { window.goToStep(parseInt(p.dataset.step)); };
+      });
+    }
+
+    /* ── Wrap goToStep via assignment (NOT a function declaration) so hoisting
+          doesn't shadow audit.js's version before we capture it ── */
+    var _auditOrigGoToStep = window.goToStep;
+    window.goToStep = function(n) {
+      _auditOrigGoToStep(n);
+      updateNavPills(n);
+    };
+
+    /* ── Hook into setLang WITHOUT overriding (avoids hoisting bug) ── */
+    window._onLangChange = function() {
+      if (typeof state !== 'undefined' && state.currentStep === 5) {
+        computeAndRenderResults();
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      applyTranslations();
+      updateNavPills(0);
+    });
+  </script>
+
+</body>
+</html>
