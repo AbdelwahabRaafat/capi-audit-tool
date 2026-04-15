@@ -600,7 +600,16 @@ h1 {
 /* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 900px) {
   .hero-inner            { grid-template-columns: 1fr; }
-  .hero-visual           { display: none; }
+  .hero-visual           { margin-top: 32px; }
+  .mock-card             { max-width: 100%; }
+  .mock-arrow            { transform: rotate(90deg); font-size: 18px; padding: 8px 0; }
+  .mock-gauge-row        { gap: 12px; }
+  .gauge-wrap            { width: 70px; height: 70px; }
+  .gauge-num             { font-size: 16px; }
+  .gauge-sub             { font-size: 8px; }
+  .g-stat-label          { width: 65px; font-size: 9px; }
+  .g-stat-pct            { font-size: 10px; }
+  .mock-issue            { font-size: 10px; padding: 5px 8px; }
   .crisis-grid           { grid-template-columns: 1fr; }
   .video-wrap            { grid-template-columns: 1fr; }
   .compare-grid          { grid-template-columns: 1fr; }
