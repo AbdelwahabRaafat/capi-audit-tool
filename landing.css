@@ -722,12 +722,12 @@ h1 {
 
 @media (max-width: 600px) {
   .section { padding: 52px 16px; }
-  h1       { font-size: 28px; letter-spacing: -1px; }
+  h1       { font-size: 32px; letter-spacing: -1px; }
   .hero    { padding: 48px 16px 36px; }
   .nav-inner { padding: 0 14px; height: 56px; }
   .nav-logo { font-size: 15px; }
   .nav-cta { padding: 7px 14px; font-size: 12px; }
-  .section-title { font-size: clamp(22px, 6vw, 32px); }
+  .section-title { font-size: clamp(26px, 6vw, 36px); }
   .section-sub { font-size: 15px; margin-bottom: 36px; }
   .hero-sub { font-size: 15px; }
   .hero-actions { flex-direction: column; gap: 10px; }
@@ -773,7 +773,7 @@ h1 {
 
   /* CTA section */
   .cta-block { padding: 40px 18px; }
-  .cta-block h2 { font-size: clamp(22px, 6vw, 36px); }
+  .cta-block h2 { font-size: clamp(24px, 6vw, 36px); }
   .cta-block p  { font-size: 15px; }
   .cta-proof { font-size: 12px; gap: 14px; }
 
@@ -793,7 +793,7 @@ h1 {
 
 /* Ultra-small phones (iPhone SE, Galaxy Fold) */
 @media (max-width: 380px) {
-  h1 { font-size: 24px; }
+  h1 { font-size: 28px; }
   .hero { padding: 40px 12px 32px; }
   .section { padding: 40px 12px; }
   .nav-cta { display: none; }
