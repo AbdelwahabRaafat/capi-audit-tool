@@ -108,7 +108,14 @@ function openLeadModal(service) {
   document.getElementById('leadSuccess').style.display = 'none';
   document.getElementById('leadError').style.display   = 'none';
   document.getElementById('leadSubmitBtn').disabled    = false;
-  document.getElementById('leadSubmitBtn').textContent = 'Send My Request →';
+  document.getElementById('leadSubmitBtn').textContent = 'Send My Request \u2192';
+
+  // Auto-fill Audit ID if user completed the audit in this session
+  const auditIdField = document.getElementById('leadAuditId');
+  if (auditIdField && window._auditResults && window._auditResults.auditId) {
+    auditIdField.value = window._auditResults.auditId;
+  }
+
   const modal = document.getElementById('leadModal');
   modal.style.display = 'flex';
   setTimeout(() => { modal.style.opacity = '1'; }, 10);
@@ -130,6 +137,10 @@ async function submitLeadForm() {
   const name       = (document.getElementById('leadName').value || '').trim();
   const email      = (document.getElementById('leadEmail').value || '').trim();
   const websiteUrl = (document.getElementById('leadWebsite').value || '').trim();
+  const adSpend    = (document.getElementById('leadAdSpend') ? document.getElementById('leadAdSpend').value : '') || '';
+  const platform   = (document.getElementById('leadPlatform') ? document.getElementById('leadPlatform').value : '') || '';
+  const auditId    = (document.getElementById('leadAuditId') ? document.getElementById('leadAuditId').value : '').trim();
+  const message    = (document.getElementById('leadMessage') ? document.getElementById('leadMessage').value : '').trim();
   const errEl      = document.getElementById('leadError');
   const btn        = document.getElementById('leadSubmitBtn');
 
@@ -138,26 +149,30 @@ async function submitLeadForm() {
     errEl.style.display = 'block';
     return;
   }
+  if (!adSpend) {
+    errEl.textContent = 'Please select your monthly ad spend range.';
+    errEl.style.display = 'block';
+    return;
+  }
   errEl.style.display = 'none';
 
   btn.disabled    = true;
-  btn.textContent = 'Sending…';
+  btn.textContent = 'Sending\u2026';
 
   try {
     await fetch(LEAD_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, websiteUrl, service: _currentService }),
+      body: JSON.stringify({ name, email, websiteUrl, service: _currentService, adSpend, platform, auditId, message }),
     });
-    // Show success regardless (avoid exposing backend errors to user)
     document.getElementById('leadSuccessEmail').textContent = email;
     document.getElementById('leadForm').style.display    = 'none';
     document.getElementById('leadSuccess').style.display = 'block';
   } catch (_) {
-    // Even on network error, show success — the user shouldn't see technical errors
     document.getElementById('leadSuccessEmail').textContent = email;
     document.getElementById('leadForm').style.display    = 'none';
     document.getElementById('leadSuccess').style.display = 'block';
   }
 }
+
 

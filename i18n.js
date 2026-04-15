@@ -295,6 +295,9 @@ const TRANSLATIONS = {
 
     /* ── Audit: Results ── */
     results_label: 'Audit Complete',
+    audit_id_label: 'Audit Report ID',
+    audit_id_copy: 'Copy ID',
+    audit_id_hint: 'Reference this ID when requesting a quote \u2014 we\u0027ll link it to your full diagnosis.',
     results_default_h: 'Your Signal Health Report',
     score_label: 'Signal Score',
     loss_label: 'Estimated Signal Loss',
@@ -1059,6 +1062,9 @@ const TRANSLATIONS = {
     btn_restart: 'Lancer un Autre Audit',
 
     results_label: 'Audit Terminé',
+    audit_id_label: 'ID du Rapport d\u0027Audit',
+    audit_id_copy: 'Copier l\u0027ID',
+    audit_id_hint: 'Utilisez cet ID lors d\u0027une demande de devis \u2014 nous le lierons à votre diagnostic complet.',
     results_default_h: 'Votre Rapport de Santé du Signal',
     score_label: 'Score Signal',
     loss_label: 'Perte de Signal Estimée',

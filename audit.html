@@ -415,6 +415,17 @@
           </div>
         </div>
       </div>
+
+      <!-- Audit Report ID -->
+      <div style="margin:0 0 24px;background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:14px 18px;display:flex;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:4px;" data-i18n="audit_id_label">Audit Report ID</div>
+          <code id="auditIdDisplay" style="font-size:16px;font-weight:800;letter-spacing:0.05em;color:#a5b4fc;font-family:'Courier New',monospace;">Generating…</code>
+        </div>
+        <button onclick="navigator.clipboard.writeText(document.getElementById('auditIdDisplay').textContent).then(function(){this.textContent='Copied!';setTimeout(function(){document.querySelector('.audit-copy-btn').textContent='Copy ID'}, 1500)}.bind(this))" class="audit-copy-btn" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);color:#a5b4fc;border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;" data-i18n="audit_id_copy">Copy ID</button>
+        <div style="width:100%;font-size:12px;color:#475569;" data-i18n="audit_id_hint">Reference this ID when requesting a quote — we'll link it to your full diagnosis.</div>
+      </div>
+
       <div class="section-title-row">
         <h3 data-i18n="issues_section">Issues Found</h3>
         <div class="issue-count" id="issueCount">0</div>

@@ -1,10 +1,10 @@
 /**
  * Netlify Function: send-lead
- * Receives a general service inquiry from the landing page modal.
- * Sends a notification email to the owner via Resend.
+ * Handles general service inquiries from the landing page / pricing page modal.
+ * Sends a rich notification to the owner via Resend.
  *
  * POST /api/send-lead
- * Body: { name, email, websiteUrl, service }
+ * Body: { name, email, websiteUrl, service, adSpend, platform, auditId, message }
  */
 
 const https = require('https');
@@ -39,15 +39,22 @@ function resendSend(payload) {
   });
 }
 
-function buildLeadHTML({ name, email, websiteUrl, service }) {
-  return `
-<!DOCTYPE html>
+function row(label, value, color) {
+  if (!value) return '';
+  return `<tr>
+    <td style="padding:10px 16px;border-bottom:1px solid #1e2a3a;color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;width:130px;vertical-align:top;">${label}</td>
+    <td style="padding:10px 16px;border-bottom:1px solid #1e2a3a;color:${color || '#f1f5f9'};font-size:13px;font-weight:600;">${value}</td>
+  </tr>`;
+}
+
+function buildLeadHTML({ name, email, websiteUrl, service, adSpend, platform, auditId, message }) {
+  return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="UTF-8"/><title>New Service Inquiry</title></head>
 <body style="margin:0;padding:0;background:#080b14;font-family:'Segoe UI',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#080b14;padding:40px 16px;">
     <tr><td align="center">
-      <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+      <table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;">
 
         <!-- Header -->
         <tr>
@@ -61,50 +68,36 @@ function buildLeadHTML({ name, email, websiteUrl, service }) {
           </td>
         </tr>
 
-        <!-- Body -->
+        <!-- Service badge -->
         <tr>
-          <td style="background:#0f1520;padding:28px 32px;">
-            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-              <tr>
-                <td style="color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;padding:8px 0 4px;">Service of Interest</td>
-              </tr>
-              <tr>
-                <td style="padding:10px 16px;background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(124,58,237,0.15));border:1px solid rgba(99,102,241,0.3);border-radius:8px;color:#a5b4fc;font-size:15px;font-weight:700;">
-                  ${service || 'General Inquiry'}
-                </td>
-              </tr>
-              <tr><td style="padding-top:20px;"></td></tr>
-              <tr>
-                <td style="color:#64748b;font-size:12px;font-weight:600;text-transform:uppercase;padding-bottom:8px;">Lead Details</td>
-              </tr>
-              <tr>
-                <td style="background:#161e30;border:1px solid #1e2a3a;border-radius:10px;overflow:hidden;">
-                  <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr>
-                      <td style="padding:12px 16px;border-bottom:1px solid #1e2a3a;color:#64748b;font-size:12px;width:100px;">Name</td>
-                      <td style="padding:12px 16px;border-bottom:1px solid #1e2a3a;color:#f1f5f9;font-size:13px;font-weight:600;">${name || '—'}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding:12px 16px;border-bottom:1px solid #1e2a3a;color:#64748b;font-size:12px;">Email</td>
-                      <td style="padding:12px 16px;border-bottom:1px solid #1e2a3a;">
-                        <a href="mailto:${email}" style="color:#6366f1;font-size:13px;font-weight:600;text-decoration:none;">${email}</a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding:12px 16px;color:#64748b;font-size:12px;">Website</td>
-                      <td style="padding:12px 16px;color:#94a3b8;font-size:13px;">${websiteUrl || '—'}</td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
+          <td style="background:#0f1520;padding:24px 32px 0;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:8px;">Service of Interest</div>
+            <div style="display:inline-block;padding:10px 20px;background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(124,58,237,0.15));border:1px solid rgba(99,102,241,0.35);border-radius:10px;color:#a5b4fc;font-size:15px;font-weight:700;">
+              ${service || 'General Inquiry'}
+            </div>
+          </td>
+        </tr>
+
+        <!-- Details table -->
+        <tr>
+          <td style="background:#0f1520;padding:20px 32px 0;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;margin-bottom:10px;">Lead Details</div>
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#161e30;border:1px solid #1e2a3a;border-radius:12px;overflow:hidden;border-collapse:collapse;">
+              ${row('Name', name)}
+              ${row('Email', `<a href="mailto:${email}" style="color:#6366f1;text-decoration:none;">${email}</a>`, '')}
+              ${row('Website', websiteUrl)}
+              ${row('Monthly Spend', adSpend, '#86efac')}
+              ${row('Platform', platform)}
+              ${auditId ? row('Audit Report ID', `<span style="font-family:monospace;color:#a5b4fc;letter-spacing:0.05em;">${auditId}</span>`, '') : ''}
+              ${message ? row('Message', `<em style="color:#94a3b8;font-style:italic;">${message}</em>`, '') : ''}
             </table>
           </td>
         </tr>
 
         <!-- Footer -->
         <tr>
-          <td style="background:#080b14;border-top:1px solid #1e2a3a;padding:16px 32px;border-radius:0 0 16px 16px;text-align:center;">
-            <p style="color:#475569;font-size:11px;margin:0;">
+          <td style="background:#080b14;border-top:1px solid #1e2a3a;padding:16px 32px;border-radius:0 0 16px 16px;text-align:center;margin-top:0;">
+            <p style="color:#475569;font-size:11px;margin:16px 0 0;">
               Submitted: ${new Date().toUTCString()} &nbsp;|&nbsp; SignalAudit Lead System
             </p>
           </td>
@@ -141,7 +134,7 @@ exports.handler = async (event) => {
   };
 
   try {
-    const { name, email, websiteUrl, service } = JSON.parse(event.body || '{}');
+    const { name, email, websiteUrl, service, adSpend, platform, auditId, message } = JSON.parse(event.body || '{}');
 
     if (!email || !email.includes('@')) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'Valid email required' }) };
@@ -153,8 +146,8 @@ exports.handler = async (event) => {
     await resendSend({
       from: `SignalAudit Leads <${fromEmail}>`,
       to: [notifyEmail],
-      subject: `New Inquiry: ${service || 'General'} — ${name || 'Unknown'} (${email})`,
-      html: buildLeadHTML({ name, email, websiteUrl, service }),
+      subject: `New Inquiry: ${service || 'General'} — ${name || email} ${auditId ? `| ID: ${auditId}` : ''}`,
+      html: buildLeadHTML({ name, email, websiteUrl, service, adSpend, platform, auditId, message }),
     });
 
     return {

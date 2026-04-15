@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Netlify Function: send-report
  * Receives audit data + PDF base64 from the browser,
  * sends a branded email with PDF attachment via Resend.
@@ -178,12 +178,13 @@ function buildEmailHTML({ name, businessName, websiteUrl, score, gradeKey, signa
 }
 
 /* ── Build the lead notification email (to you) ── */
-function buildNotificationHTML({ name, email, businessName, websiteUrl, score, gradeKey, signalLoss, issues }) {
+function buildNotificationHTML({ name, email, businessName, websiteUrl, score, gradeKey, signalLoss, issues, auditId }) {
   const grade = GRADES[gradeKey] || GRADES.grade_high;
   const issueList = (issues || []).map(i => `• ${i.icon} ${i.title} [${i.badge}]`).join('\n');
   return `<div style="font-family:monospace;background:#0f1520;color:#f1f5f9;padding:24px;border-radius:8px;">
   <h2 style="color:#818cf8;margin:0 0 16px;">🔔 New Audit Lead</h2>
   <table>
+    ${auditId ? `<tr><td style="color:#64748b;padding:4px 16px 4px 0;">Audit ID:</td><td><strong style="color:#a5b4fc;letter-spacing:0.05em;">${auditId}</strong></td></tr>` : ''}
     <tr><td style="color:#64748b;padding:4px 16px 4px 0;">Name:</td><td><strong>${name || '—'}</strong></td></tr>
     <tr><td style="color:#64748b;padding:4px 16px 4px 0;">Email:</td><td><strong><a href="mailto:${email}" style="color:#6366f1;">${email}</a></strong></td></tr>
     <tr><td style="color:#64748b;padding:4px 16px 4px 0;">Business:</td><td><strong>${businessName || '—'}</strong></td></tr>
@@ -213,7 +214,7 @@ exports.handler = async (event) => {
 
   try {
     const data = JSON.parse(event.body || '{}');
-    const { name, email, businessName, websiteUrl, score, gradeKey, signalLoss, issues, pdfBase64 } = data;
+    const { name, email, businessName, websiteUrl, score, gradeKey, signalLoss, issues, auditId, pdfBase64 } = data;
 
     /* Validate */
     if (!email || !email.includes('@')) {
@@ -246,8 +247,8 @@ exports.handler = async (event) => {
     await resendSend({
       from: `SignalAudit Leads <${fromEmail}>`,
       to: [notifyEmail],
-      subject: `🔔 New Audit Lead: ${name || 'Unknown'} — ${bizName} (Score: ${scoreVal.toFixed(1)})`,
-      html: buildNotificationHTML({ name, email, businessName, websiteUrl, score: scoreVal, gradeKey, signalLoss, issues }),
+      subject: `New Audit Lead: ${name || 'Unknown'} — ${bizName} (Score: ${scoreVal.toFixed(1)})`,
+      html: buildNotificationHTML({ name, email, businessName, websiteUrl, score: scoreVal, gradeKey, signalLoss, issues, auditId }),
     });
 
     return {

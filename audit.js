@@ -2,6 +2,18 @@
    SIGNAL AUDIT — SCORING ENGINE (i18n-aware)
    ════════════════════════════════════════════════ */
 
+// ── AUDIT ID GENERATOR ──
+function generateAuditId() {
+  const d = new Date();
+  const date = d.getFullYear().toString() +
+    String(d.getMonth() + 1).padStart(2, '0') +
+    String(d.getDate()).padStart(2, '0');
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous chars
+  let rand = '';
+  for (let i = 0; i < 5; i++) rand += chars[Math.floor(Math.random() * chars.length)];
+  return `SA-${date}-${rand}`;
+}
+
 const state = { currentStep: 0, totalSteps: 5, answers: {}, emailSent: false };
 
 /* API endpoint — switches automatically between local dev and production.
@@ -270,6 +282,12 @@ function computeAndRenderResults() {
   }
 
   window._auditResults = { score, issues, opportunities, signalLoss, gradeKey, descKey };
+
+  /* Generate and display unique Audit ID */
+  const auditId = generateAuditId();
+  window._auditResults.auditId = auditId;
+  const auditIdEl = document.getElementById('auditIdDisplay');
+  if (auditIdEl) auditIdEl.textContent = auditId;
 }
 
 // ── EMAIL REPORT (primary CTA) ──
@@ -319,6 +337,7 @@ async function emailReport() {
           gradeKey:     R.gradeKey,
           signalLoss:   R.signalLoss,
           issues:       R.issues,
+          auditId:      R.auditId || '',
           pdfBase64,
         }),
       });
@@ -423,8 +442,15 @@ function buildPDFDoc() {
   doc.setTextColor(...TEXT_HEAD);
   doc.setFontSize(7); doc.setFont('helvetica', 'bold');
   doc.text(stripEmoji(t('pdf_tagline')), 18, 18);
+  // Audit ID (top right)
+  if (R.auditId) {
+    doc.setFontSize(6.5); doc.setFont('helvetica', 'normal');
+    doc.setTextColor(180, 190, 220);
+    doc.text(`Report ID: ${R.auditId}`, W - 14, 18, { align: 'right' });
+  }
   // Business name
   doc.setFontSize(17); doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...TEXT_HEAD);
   doc.text(businessName, 14, 34);
   // Meta line
   doc.setFontSize(8); doc.setFont('helvetica', 'normal');

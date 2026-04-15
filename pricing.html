@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
@@ -331,41 +331,79 @@
     </div>
   </div>
 
-  <!-- LEAD MODAL (duplicated from index.html for this standalone page) -->
+  <!-- ══ LEAD CAPTURE MODAL ══ -->
   <div id="leadModal" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;padding:20px;">
     <div id="leadBackdrop" onclick="closeLeadModal()" style="position:absolute;inset:0;background:rgba(8,11,20,0.85);backdrop-filter:blur(8px);"></div>
-    <div style="position:relative;width:100%;max-width:480px;background:linear-gradient(145deg,#0f1520,#161e30);border:1px solid rgba(99,102,241,0.25);border-radius:20px;padding:36px;box-shadow:0 40px 80px rgba(0,0,0,0.6);">
+    <div style="position:relative;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;background:linear-gradient(145deg,#0f1520,#161e30);border:1px solid rgba(99,102,241,0.25);border-radius:20px;padding:32px 36px;box-shadow:0 40px 80px rgba(0,0,0,0.6);">
       <button onclick="closeLeadModal()" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.06);border:none;border-radius:8px;color:#94a3b8;width:32px;height:32px;cursor:pointer;font-size:18px;line-height:32px;" aria-label="Close">&times;</button>
-      <div id="leadModalService" style="display:inline-block;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);border-radius:100px;padding:4px 14px;color:#a5b4fc;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:18px;"></div>
-      <h2 style="margin:0 0 6px;color:#f1f5f9;font-size:22px;font-weight:800;letter-spacing:-0.5px;">Get a Quote</h2>
-      <p style="margin:0 0 24px;color:#64748b;font-size:14px;">Leave your details and we'll send a custom quote within 24 hours.</p>
+      <div id="leadModalService" style="display:inline-block;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.35);border-radius:100px;padding:4px 14px;color:#a5b4fc;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:16px;"></div>
+      <h2 style="margin:0 0 4px;color:#f1f5f9;font-size:21px;font-weight:800;letter-spacing:-0.5px;">Book a Strategic Call</h2>
+      <p style="margin:0 0 22px;color:#64748b;font-size:13px;">We'll reach out within 24 hours to schedule.</p>
       <div id="leadForm">
-        <div style="margin-bottom:14px;">
-          <label style="display:block;color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Your Name</label>
-          <input id="leadName" type="text" placeholder="Ahmed Al-Rashid" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;" />
+        <!-- Row 1: Name -->
+        <div style="margin-bottom:12px;">
+          <label style="display:block;color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Your Name</label>
+          <input id="leadName" type="text" placeholder="Your full name" autocomplete="name" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 13px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
         </div>
-        <div style="margin-bottom:14px;">
-          <label style="display:block;color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Business Email</label>
-          <input id="leadEmail" type="email" placeholder="you@company.com" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;" />
+        <!-- Row 2: Email (required) -->
+        <div style="margin-bottom:12px;">
+          <label style="display:block;color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Business Email <span style="color:#ef4444;">*</span></label>
+          <input id="leadEmail" type="email" placeholder="you@company.com" autocomplete="email" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 13px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
         </div>
-        <div style="margin-bottom:22px;">
-          <label style="display:block;color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Website URL</label>
-          <input id="leadWebsite" type="url" placeholder="https://yourstore.com" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 14px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;" />
+        <!-- Row 3: Website -->
+        <div style="margin-bottom:12px;">
+          <label style="display:block;color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Website URL</label>
+          <input id="leadWebsite" type="url" placeholder="https://yourstore.com" autocomplete="url" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 13px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'" />
+        </div>
+        <!-- Row 4: Monthly Ad Spend (required) -->
+        <div style="margin-bottom:12px;">
+          <label style="display:block;color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Monthly Meta Ad Spend <span style="color:#ef4444;">*</span></label>
+          <select id="leadAdSpend" style="width:100%;box-sizing:border-box;background:#161e30;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 13px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;cursor:pointer;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+            <option value="" disabled selected style="color:#64748b;">Select your spend range…</option>
+            <option value="Under $1,000/mo">Under $1,000 / month</option>
+            <option value="$1,000 – $5,000/mo">$1,000 – $5,000 / month</option>
+            <option value="$5,000 – $20,000/mo">$5,000 – $20,000 / month</option>
+            <option value="$20,000 – $50,000/mo">$20,000 – $50,000 / month</option>
+            <option value="Over $50,000/mo">Over $50,000 / month</option>
+          </select>
+        </div>
+        <!-- Row 5: Platform (optional) -->
+        <div style="margin-bottom:12px;">
+          <label style="display:block;color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Platform / Tech Stack <span style="color:#475569;font-weight:400;font-size:10px;">(optional)</span></label>
+          <select id="leadPlatform" style="width:100%;box-sizing:border-box;background:#161e30;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 13px;color:#f1f5f9;font-size:14px;font-family:inherit;outline:none;cursor:pointer;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+            <option value="">Not sure / Other</option>
+            <option value="Shopify">Shopify</option>
+            <option value="WooCommerce">WooCommerce</option>
+            <option value="Magento / Adobe Commerce">Magento / Adobe Commerce</option>
+            <option value="Custom / Headless">Custom / Headless</option>
+            <option value="HubSpot">HubSpot CRM</option>
+            <option value="Salesforce">Salesforce CRM</option>
+          </select>
+        </div>
+        <!-- Row 6: Audit Report ID (optional) -->
+        <div style="margin-bottom:12px;">
+          <label style="display:block;color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Audit Report ID <span style="color:#475569;font-weight:400;font-size:10px;">(optional — from your free audit)</span></label>
+          <input id="leadAuditId" type="text" placeholder="e.g. SA-20250415-AB3K7" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(99,102,241,0.2);border-radius:10px;padding:10px 13px;color:#a5b4fc;font-size:13px;font-family:'Courier New',monospace;outline:none;letter-spacing:0.05em;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(99,102,241,0.2)'" />
+          <div style="font-size:11px;color:#334155;margin-top:4px;">Found on your results page and in your PDF report. Lets us skip the discovery call.</div>
+        </div>
+        <!-- Row 7: Message (optional) -->
+        <div style="margin-bottom:20px;">
+          <label style="display:block;color:#94a3b8;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Anything else? <span style="color:#475569;font-weight:400;font-size:10px;">(optional)</span></label>
+          <textarea id="leadMessage" placeholder="Tell us what you're trying to fix or any specific questions…" rows="3" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 13px;color:#f1f5f9;font-size:13px;font-family:inherit;outline:none;resize:vertical;line-height:1.6;" onfocus="this.style.borderColor='rgba(99,102,241,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"></textarea>
         </div>
         <div id="leadError" style="display:none;color:#fca5a5;font-size:13px;margin-bottom:12px;"></div>
-        <button id="leadSubmitBtn" onclick="submitLeadForm()" style="width:100%;background:linear-gradient(135deg,#6366f1,#7c3aed);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">
+        <button id="leadSubmitBtn" onclick="submitLeadForm()" style="width:100%;background:linear-gradient(135deg,#6366f1,#7c3aed);color:white;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity 0.2s;">
           Send My Request &rarr;
         </button>
-        <p style="margin:12px 0 0;color:#475569;font-size:11px;text-align:center;">No spam. We'll only contact you about your inquiry.</p>
+        <p style="margin:10px 0 0;color:#334155;font-size:11px;text-align:center;">No spam. We'll only contact you about your inquiry.</p>
       </div>
-      <div id="leadSuccess" style="display:none;text-align:center;padding:20px 0;">
-        <div style="font-size:48px;margin-bottom:16px;">&#10003;</div>
-        <h3 style="margin:0 0 10px;color:#86efac;font-size:20px;font-weight:800;">Request Received!</h3>
+      <div id="leadSuccess" style="display:none;text-align:center;padding:24px 0;">
+        <div style="width:56px;height:56px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px;color:#86efac;">&#10003;</div>
+        <h3 style="margin:0 0 10px;color:#86efac;font-size:20px;font-weight:800;">Request Sent!</h3>
         <p style="margin:0;color:#94a3b8;font-size:14px;">We'll reach out to <strong id="leadSuccessEmail" style="color:#f1f5f9;"></strong> within 24 hours.</p>
       </div>
     </div>
   </div>
-
   <script src="i18n.js"></script>
   <script src="landing.js"></script>
   <script>
